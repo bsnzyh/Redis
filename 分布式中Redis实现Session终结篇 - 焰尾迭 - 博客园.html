@@ -1,0 +1,1710 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0047)http://www.cnblogs.com/yanweidie/p/4763556.html -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园</title>
+<link type="text/css" rel="stylesheet" href="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/bundle-nature.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/yanweidie/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/yanweidie/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/yanweidie/wlwmanifest.xml">
+<script type="text/javascript" src="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/encoder.js"></script><script src="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/jquery.js" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'yanweidie', cb_enable_mathjax=false;</script>
+<script src="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/blog-common.js" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+<!--PageBeginHtml Block Begin-->
+<link href="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/main.css" rel="stylesheet" type="text/css">
+<!--PageBeginHtml Block End-->
+
+<!--done-->
+<div id="banner"><div id="bnr_pic">
+<!--done-->
+<div class="header">
+	<div class="headerText">
+		<a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/yanweidie/">焰尾迭</a><br>
+	</div><br>
+	<div class="headerDis">吾生也有涯，而知也无涯。以有涯随无涯，殆已。</div>
+</div>
+</div></div>
+<div id="main">
+	<!-- left starts -->
+	<div id="left">
+		<div id="mystats">
+			<br>
+				
+<!--done-->
+<div class="blogStats">
+随笔 - 29&nbsp;
+文章 - 0&nbsp;
+评论 - 487&nbsp;
+
+</div>
+			
+		</div>
+		<div id="mylinks">
+<!--done-->
+<a id="MyLinks1_HomeLink" class="menu" href="http://www.cnblogs.com/">博客园</a>&nbsp;&nbsp;<a id="MyLinks1_MyHomeLink" class="menu" href="http://www.cnblogs.com/yanweidie/">首页</a>&nbsp;&nbsp;<a id="MyLinks1_NewPostLink" class="menu" rel="nofollow" href="http://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a>&nbsp;&nbsp;<a id="MyLinks1_ContactLink" accesskey="9" class="menu" rel="nofollow" href="http://msg.cnblogs.com/send/%E7%84%B0%E5%B0%BE%E8%BF%AD">联系</a>&nbsp;&nbsp;<a id="MyLinks1_Admin" class="menu" rel="nofollow" href="http://i.cnblogs.com/">管理</a>&nbsp;&nbsp;<a id="MyLinks1_Syndication" class="menu" href="http://www.cnblogs.com/yanweidie/rss">订阅</a>&nbsp;<a id="MyLinks1_XMLLink" href="http://www.cnblogs.com/yanweidie/rss"><img src="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/xml.gif" alt="订阅"></a></div>
+		<div id="topics">
+			
+<div id="post_detail">
+<div class="post">
+	<div class="postTitle">
+		<h1><a id="cb_post_title_url" class="postTitle2" href="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园.html">分布式中Redis实现Session终结篇</a></h1>
+	</div>
+	<div id="cnblogs_post_body"><p><a name="_labelTop"></a></p>
+<p>　　上一篇使用Redis实现Session共享方式虽然可行,但是实际操作起来却很麻烦，现有代码已经是这个样子了,总不可能全部换掉吧！好吧,这是个很实际的问题,那么能不能实现无侵入式的分布式Session共享方案呢？mode="InProc"这是web.config里面使用iis进程保存Session的配置,不知你注意过没,mode除了InProc,SQLServer,StateServer这几个常用的,还有一个Custom。这里我要使用的是网友提供给的一种方自定义Session，需要继承System.Web.SessionState.SessionStateStoreProviderBase实现自己的SessionStateStoreProvide,下面讲解如何实现自定义的RedisSessionStateStore。</p>
+<p><strong>阅读目录</strong></p>
+<ul>
+<li><a href="http://www.cnblogs.com/yanweidie/p/4763556.html#_label0">SesstionStateProvider<br></a></li>
+<li><a href="http://www.cnblogs.com/yanweidie/p/4763556.html#_label1">实现自己的RedisSessionStateStore</a></li>
+<li><a href="http://www.cnblogs.com/yanweidie/p/4763556.html#_label3">总结</a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</ul>
+<div style="text-align: right;"><a href="http://www.cnblogs.com/yanweidie/p/4763556.html#_labelTop">回到顶部</a><a name="_label0"></a></div>
+<h1 class="title">SessionStateStoreProviderBase</h1>
+<p>　　SessionStateStoreProviderBase是asp.net提供的定义数据存储区的会话状态提供程序所需的成员。像常用InProcSessionStateStore(mode="InProc"),SqlSessionStateStore(mode="SQLServer"),都是继承SessionStateStoreProviderBase实现的存储。我们来看看msdn对其成员的定义</p>
+<table>
+    <colgroup>
+    <col width="180">
+    <col>
+    </colgroup>
+<tbody>
+<tr><th>成员</th><th>说明</th></tr>
+<tr>
+<td>
+<p><a href="https://msdn.microsoft.com/zh-cn/library/system.web.sessionstate.sessionstatestoreproviderbase.initializerequest(v=vs.80).aspx">InitializeRequest</a>&nbsp;方法</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+<td>
+<p>执行会话状态存储提供程序必需的所有初始化操作。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tr>
+<tr>
+<td>
+<p><a href="https://msdn.microsoft.com/zh-cn/library/system.web.sessionstate.sessionstatestoreproviderbase.endrequest(v=vs.80).aspx">EndRequest</a>&nbsp;方法</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+<td>
+<p>执行会话状态存储提供程序必需的所有清理操作。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tr>
+<tr>
+<td>
+<p><a href="https://msdn.microsoft.com/zh-cn/library/system.web.sessionstate.sessionstatestoreproviderbase.dispose(v=vs.80).aspx">Dispose</a>&nbsp;方法</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+<td>
+<p>释放会话状态存储提供程序不再使用的所有资源。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tr>
+<tr>
+<td>
+<p><strong>GetItemExclusive</strong>&nbsp;方法</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+<td>
+<p>从会话数据存储区中检索会话的值和信息，并在请求持续期间锁定数据存储区中的会话项数据。<strong>GetItemExclusive</strong>&nbsp;方法设置几个输出参数值，这些参数值将数据存储区中当前会话状态项的状态通知给执行调用的&nbsp;<strong>SessionStateModule</strong>。</p>
+<p>如果数据存储区中未找到任何会话项数据，则<strong>GetItemExclusive</strong>&nbsp;方法将&nbsp;<span class="parameter">locked&nbsp;输出参数设置为<strong>false</strong>，并返回&nbsp;<strong>null</strong>。这将导致&nbsp;<strong>SessionStateModule</strong>调用&nbsp;CreateNewStoreData&nbsp;方法来为请求创建一个新的SessionStateStoreData&nbsp;对象。</span></p>
+<p>如果在数据存储区中找到会话项数据但该数据已锁定，则<strong>GetItemExclusive</strong>&nbsp;方法将&nbsp;<span class="parameter">locked&nbsp;输出参数设置为<strong>true</strong>，将&nbsp;<span class="parameter">lockAge&nbsp;输出参数设置为当前日期和时间与该项锁定日期和时间的差，将&nbsp;<span class="parameter">lockId&nbsp;输出参数设置为从数据存储区中检索的锁定标识符，并返回&nbsp;<strong>null</strong>。这将导致<strong>SessionStateModule</strong>&nbsp;隔半秒后再次调用<strong>GetItemExclusive</strong>&nbsp;方法，以尝试检索会话项信息和获取对数据的锁定。如果&nbsp;<span class="parameter">lockAge&nbsp;输出参数的设置值超过<strong>ExecutionTimeout</strong>&nbsp;值，<strong>SessionStateModule</strong>&nbsp;将调用<strong>ReleaseItemExclusive</strong>&nbsp;方法以清除对会话项数据的锁定，然后再次调用&nbsp;<strong>GetItemExclusive</strong>&nbsp;方法。</span></span></span></span></p>
+<p>如果&nbsp;<strong>regenerateExpiredSessionId</strong>&nbsp;属性设置为&nbsp;<strong>true</strong>，则&nbsp;<span class="parameter">actionFlags&nbsp;参数用于其&nbsp;<a href="https://msdn.microsoft.com/zh-cn/library/system.web.configuration.sessionstatesection.cookieless(v=vs.80).aspx">Cookieless</a>&nbsp;属性为&nbsp;<strong>true</strong>&nbsp;的会话。<span class="parameter">actionFlags&nbsp;值设置为&nbsp;<a href="https://msdn.microsoft.com/zh-cn/library/system.web.sessionstate.sessionstateactions(v=vs.80).aspx">InitializeItem</a>&nbsp;(1) 则指示会话数据存储区中的项是需要初始化的新会话。通过调用<a href="https://msdn.microsoft.com/zh-cn/library/system.web.sessionstate.sessionstatestoreproviderbase.createuninitializeditem(v=vs.80).aspx">CreateUninitializedItem</a>&nbsp;方法可以创建会话数据存储区中未初始化的项。如果会话数据存储区中的项已经初始化，则&nbsp;<span class="parameter">actionFlags&nbsp;参数设置为零。</span></span></span></p>
+<p>如果提供程序支持无 Cookie 会话，请将&nbsp;<span class="parameter">actionFlags&nbsp;输出参数设置为当前项从会话数据存储区中返回的值。如果被请求的会话存储项的&nbsp;<span class="parameter">actionFlags&nbsp;参数值等于<strong>InitializeItem</strong>&nbsp;枚举值 (1)，则&nbsp;<strong>GetItemExclusive</strong>&nbsp;方法在设置&nbsp;<span class="parameter">actionFlags&nbsp;<code>out</code>&nbsp;参数之后应将数据存储区中的值设置为零。</span></span></span></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tr>
+<tr>
+<td>
+<p><strong>GetItem</strong>&nbsp;方法</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+<td>
+<p>除了不尝试锁定数据存储区中的会话项以外，此方法与<strong>GetItemExclusive</strong>&nbsp;方法执行的操作相同。<strong>GetItem</strong>&nbsp;方法在&nbsp;<strong>EnableSessionState</strong>&nbsp;属性设置为&nbsp;<strong>ReadOnly</strong>&nbsp;时调用。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tr>
+<tr>
+<td>
+<p><strong>SetAndReleaseItemExclusive</strong>&nbsp;方法</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+<td>
+<p>采用当前请求的&nbsp;<strong>HttpContext</strong>&nbsp;实例、当前请求的<strong>SessionID</strong>&nbsp;值、包含要存储的当前会话值的<strong>SessionStateStoreData</strong>&nbsp;对象、当前请求的锁定标识符以及指示要存储的数据是属于新会话还是现有会话的值作为输入。</p>
+<p>如果&nbsp;<span class="parameter">newItem&nbsp;参数为&nbsp;<strong>true</strong>，则<strong>SetAndReleaseItemExclusive</strong>&nbsp;方法使用提供的值将一个新项插入到数据存储区中。否则，数据存储区中的现有项使用提供的值进行更新，并释放对数据的任何锁定。请注意，只有与提供的&nbsp;<strong>SessionID</strong>&nbsp;值和锁定标识符值匹配的当前应用程序的会话数据才会更新。</span></p>
+<p>调用&nbsp;<strong>SetAndReleaseItemExclusive</strong>&nbsp;方法后，<strong>SessionStateModule</strong>&nbsp;调用&nbsp;<a href="https://msdn.microsoft.com/zh-cn/library/system.web.sessionstate.sessionstatestoreproviderbase.resetitemtimeout(v=vs.80).aspx">ResetItemTimeout</a>&nbsp;方法来更新会话项数据的过期日期和时间。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tr>
+<tr>
+<td>
+<p><strong>ReleaseItemExclusive</strong>&nbsp;方法</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+<td>
+<p>采用当前请求的&nbsp;<strong>HttpContext</strong>&nbsp;实例、当前请求的<strong>SessionID</strong>&nbsp;值以及当前请求的锁定标识符作为输入，并释放对会话数据存储区中的项的锁定。在调用&nbsp;<strong>GetItem</strong>&nbsp;或<strong>GetItemExclusive</strong>&nbsp;方法，并且数据存储区指定被请求项已锁定，但锁定时间已超过&nbsp;<strong>ExecutionTimeout</strong>&nbsp;值时会调用此方法。此方法清除锁定，释放该被请求项以供其他请求使用。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tr>
+<tr>
+<td>
+<p><strong>RemoveItem</strong>&nbsp;方法</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+<td>
+<p>此方法在&nbsp;<strong>Abandon</strong>&nbsp;方法被调用时调用。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tr>
+<tr>
+<td>
+<p><strong>CreateUninitializedItem</strong>&nbsp;方法</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+<td>
+<p>采用当前请求的&nbsp;<strong>HttpContext</strong>&nbsp;实例、当前请求的<strong>SessionID</strong>&nbsp;值以及当前请求的锁定标识符作为输入，并向会话数据存储区添加一个&nbsp;<strong>actionFlags</strong>&nbsp;值为<strong>InitializeItem</strong>&nbsp;的未初始化项。</p>
+<p>如果&nbsp;<strong>regenerateExpiredSessionId</strong>&nbsp;属性设置为&nbsp;<strong>true</strong>，则&nbsp;<strong>CreateUninitializedItem</strong>&nbsp;方法用于无 Cookie 会话，这将导致遇到过期会话 ID 时，<strong>SessionStateModule</strong>&nbsp;会生成一个新的&nbsp;<strong>SessionID</strong>值。</p>
+<p>生成新的&nbsp;<strong>SessionID</strong>&nbsp;值的过程需要浏览器重定向到包含新生成的会话 ID 的 URL。在包含过期的会话 ID 的初始请求期间，会调用&nbsp;<strong>CreateUninitializedItem</strong>&nbsp;方法。<strong>SessionStateModule</strong>&nbsp;获取一个新的&nbsp;<strong>SessionID</strong>&nbsp;值来替换过期的会话 ID 之后，它会调用<strong>CreateUninitializedItem</strong>&nbsp;方法以将一个未初始化项添加到会话状态数据存储区中。然后，浏览器重定向到包含新生成的&nbsp;<strong>SessionID</strong>&nbsp;值的 URL。如果会话数据存储区中存在未初始化项，则可以确保包含新生成的&nbsp;<strong>SessionID</strong>&nbsp;值的重定向请求被视为新的会话，而不会被误认为是对过期会话的请求。</p>
+<p>会话数据存储区中未初始化的项与新生成的&nbsp;<strong>SessionID</strong>值关联，并且仅包含默认值，其中包括到期日期和时间以及与&nbsp;<strong>GetItem</strong>&nbsp;和&nbsp;<strong>GetItemExclusive</strong>&nbsp;方法的<strong>actionFlags</strong>&nbsp;参数相对应的值。会话状态存储区中的未初始化项应包含一个与&nbsp;<strong>InitializeItem</strong>&nbsp;枚举值 (1) 相等的<strong>actionFlags</strong>&nbsp;值。此值由&nbsp;<strong>GetItem</strong>&nbsp;和<strong>GetItemExclusive</strong>&nbsp;方法传递给<strong>SessionStateModule</strong>，并针对&nbsp;<strong>SessionStateModule</strong>指定当前会话是新会话。然后，<strong>SessionStateModule</strong>将初始化该新会话，并引发&nbsp;<strong>Session_OnStart</strong>&nbsp;事件。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tr>
+<tr>
+<td>
+<p><strong>CreateNewStoreData</strong>&nbsp;方法</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+<td>
+<p>采用当前请求的&nbsp;<strong>HttpContext</strong>&nbsp;实例和当前会话的<strong>Timeout</strong>&nbsp;值作为输入，并返回带有空ISessionStateItemCollection&nbsp;对象的新的<strong>SessionStateStoreData</strong>&nbsp;对象、一个HttpStaticObjectsCollection&nbsp;集合和指定的&nbsp;<strong>Timeout</strong>值。使用&nbsp;GetSessionStaticObjects&nbsp;方法可以检索 ASP.NET 应用程序的&nbsp;<strong>HttpStaticObjectsCollection</strong>&nbsp;实例。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</table>
+<p>上面的定义有点长,其实很多都在说明一点那就是原生了Session是单线程的方式实现的，当多个进行读的时候会加锁后面的会等待。我们下面实现的去掉了这些锁，加快并发读写。</p>
+<div style="text-align: right;"><a href="http://www.cnblogs.com/yanweidie/p/4763556.html#_labelTop">回到顶部</a><a name="_label1"></a></div>
+<h1 class="title">实现自己的RedisSessionStateStore</h1>
+<p>&nbsp; &nbsp; 继承SessionStateStoreProviderBase实现自己的RedisSessionStateStore也很简单,只需继承SessionStateStoreProviderBase重写CreateNewStoreData,CreateUninitializedItem,GetItem等几个方法即可，下面贴出代码，参考<span style="color: #3366ff;">InProcSessionStateStore</span>实现。</p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: #808080;">///</span> <span style="color: #808080;">&lt;summary&gt;</span>
+    <span style="color: #808080;">///</span><span style="color: #008000;"> 使用Redis实现SessionStateStoreProviderBase
+    </span><span style="color: #808080;">///</span> <span style="color: #808080;">&lt;/summary&gt;</span>
+    <span style="color: #0000ff;">public</span> <span style="color: #0000ff;">class</span><span style="color: #000000;"> RedisSessionStateStore : SessionStateStoreProviderBase
+    {
+        </span><span style="color: #808080;">///</span> <span style="color: #808080;">&lt;summary&gt;</span>
+        <span style="color: #808080;">///</span><span style="color: #008000;"> 创建新的Session执行
+        </span><span style="color: #808080;">///</span> <span style="color: #808080;">&lt;/summary&gt;</span>
+        <span style="color: #0000ff;">public</span> <span style="color: #0000ff;">override</span> SessionStateStoreData CreateNewStoreData(HttpContext context, <span style="color: #0000ff;">int</span><span style="color: #000000;"> timeout)
+        {
+            </span><span style="color: #0000ff;">return</span> CreateLegitStoreData(context, <span style="color: #0000ff;">null</span>, <span style="color: #0000ff;">null</span><span style="color: #000000;">, timeout);
+        }
+
+        </span><span style="color: #0000ff;">internal</span> <span style="color: #0000ff;">static</span> SessionStateStoreData CreateLegitStoreData(HttpContext context, ISessionStateItemCollection sessionItems, HttpStaticObjectsCollection staticObjects, <span style="color: #0000ff;">int</span><span style="color: #000000;"> timeout)
+        {
+            </span><span style="color: #0000ff;">if</span> (sessionItems == <span style="color: #0000ff;">null</span><span style="color: #000000;">)
+                sessionItems </span>= <span style="color: #0000ff;">new</span><span style="color: #000000;"> SessionStateItemCollection();
+            </span><span style="color: #0000ff;">if</span> (staticObjects == <span style="color: #0000ff;">null</span> &amp;&amp; context != <span style="color: #0000ff;">null</span><span style="color: #000000;">)
+                staticObjects </span>=<span style="color: #000000;"> SessionStateUtility.GetSessionStaticObjects(context);
+            </span><span style="color: #0000ff;">return</span> <span style="color: #0000ff;">new</span><span style="color: #000000;"> SessionStateStoreData(sessionItems, staticObjects, timeout);
+        }
+
+        </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">override</span> <span style="color: #0000ff;">void</span> CreateUninitializedItem(HttpContext context, <span style="color: #0000ff;">string</span> id, <span style="color: #0000ff;">int</span><span style="color: #000000;"> timeout)
+        {
+            RedisSessionState state </span>= <span style="color: #0000ff;">new</span> RedisSessionState(<span style="color: #0000ff;">null</span>, <span style="color: #0000ff;">null</span><span style="color: #000000;">, timeout);
+            RedisBase.Item_Set</span>&lt;<span style="color: #0000ff;">string</span>&gt;<span style="color: #000000;">(id, state.ToJson(),timeout);
+        }
+
+        </span><span style="color: #0000ff;">private</span> SessionStateStoreData DoGet(HttpContext context, <span style="color: #0000ff;">string</span> id, <span style="color: #0000ff;">bool</span> exclusive, <span style="color: #0000ff;">out</span> <span style="color: #0000ff;">bool</span> locked, <span style="color: #0000ff;">out</span> TimeSpan lockAge, <span style="color: #0000ff;">out</span> <span style="color: #0000ff;">object</span> lockId, <span style="color: #0000ff;">out</span><span style="color: #000000;"> SessionStateActions actionFlags)
+        {
+            locked </span>= <span style="color: #0000ff;">false</span><span style="color: #000000;">;
+            lockId </span>= <span style="color: #0000ff;">null</span><span style="color: #000000;">;
+            lockAge </span>=<span style="color: #000000;"> TimeSpan.Zero;
+            actionFlags </span>=<span style="color: #000000;"> SessionStateActions.None;
+            RedisSessionState state </span>= RedisSessionState.FromJson(RedisBase.Item_Get&lt;<span style="color: #0000ff;">string</span>&gt;<span style="color: #000000;">(id));
+            </span><span style="color: #0000ff;">if</span> (state == <span style="color: #0000ff;">null</span><span style="color: #000000;">)
+            {
+                </span><span style="color: #0000ff;">return</span> <span style="color: #0000ff;">null</span><span style="color: #000000;">;
+            }
+            RedisBase.Item_SetExpire(id, state._timeout);
+            </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> CreateLegitStoreData(context, state._sessionItems, state._staticObjects, state._timeout);
+        }
+
+        </span><span style="color: #808080;">///</span> <span style="color: #808080;">&lt;summary&gt;</span>
+        <span style="color: #808080;">///</span><span style="color: #008000;"> 取值的时候执行
+        </span><span style="color: #808080;">///</span> <span style="color: #808080;">&lt;/summary&gt;</span>
+        <span style="color: #0000ff;">public</span> <span style="color: #0000ff;">override</span> SessionStateStoreData GetItem(HttpContext context, <span style="color: #0000ff;">string</span> id, <span style="color: #0000ff;">out</span> <span style="color: #0000ff;">bool</span> locked, <span style="color: #0000ff;">out</span> TimeSpan lockAge, <span style="color: #0000ff;">out</span> <span style="color: #0000ff;">object</span> lockId, <span style="color: #0000ff;">out</span><span style="color: #000000;"> SessionStateActions actionFlags)
+        {
+            </span><span style="color: #0000ff;">return</span> <span style="color: #0000ff;">this</span>.DoGet(context, id, <span style="color: #0000ff;">false</span>, <span style="color: #0000ff;">out</span> locked, <span style="color: #0000ff;">out</span> lockAge, <span style="color: #0000ff;">out</span> lockId, <span style="color: #0000ff;">out</span><span style="color: #000000;"> actionFlags);
+        }
+
+        </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">override</span> SessionStateStoreData GetItemExclusive(HttpContext context, <span style="color: #0000ff;">string</span> id, <span style="color: #0000ff;">out</span> <span style="color: #0000ff;">bool</span> locked, <span style="color: #0000ff;">out</span> TimeSpan lockAge, <span style="color: #0000ff;">out</span> <span style="color: #0000ff;">object</span> lockId, <span style="color: #0000ff;">out</span><span style="color: #000000;"> SessionStateActions actionFlags)
+        {
+            </span><span style="color: #0000ff;">return</span> <span style="color: #0000ff;">this</span>.DoGet(context, id, <span style="color: #0000ff;">true</span>, <span style="color: #0000ff;">out</span> locked, <span style="color: #0000ff;">out</span> lockAge, <span style="color: #0000ff;">out</span> lockId, <span style="color: #0000ff;">out</span><span style="color: #000000;"> actionFlags);
+        }
+
+        </span><span style="color: #808080;">///</span> <span style="color: #808080;">&lt;summary&gt;</span>
+        <span style="color: #808080;">///</span><span style="color: #008000;"> 新增 修改 移除键值时执行
+        </span><span style="color: #808080;">///</span> <span style="color: #808080;">&lt;/summary&gt;</span>
+        <span style="color: #808080;">///</span> <span style="color: #808080;">&lt;param name="item"&gt;</span><span style="color: #008000;">item.Items为当前所有的键值对</span><span style="color: #808080;">&lt;/param&gt;</span>
+        <span style="color: #0000ff;">public</span> <span style="color: #0000ff;">override</span> <span style="color: #0000ff;">void</span> SetAndReleaseItemExclusive(HttpContext context, <span style="color: #0000ff;">string</span> id, SessionStateStoreData item, <span style="color: #0000ff;">object</span> lockId, <span style="color: #0000ff;">bool</span><span style="color: #000000;"> newItem)
+        {
+            ISessionStateItemCollection sessionItems </span>= <span style="color: #0000ff;">null</span><span style="color: #000000;">;
+            HttpStaticObjectsCollection staticObjects </span>= <span style="color: #0000ff;">null</span><span style="color: #000000;">;
+
+            </span><span style="color: #0000ff;">if</span> (item.Items.Count &gt; <span style="color: #800080;">0</span><span style="color: #000000;">)
+                sessionItems </span>=<span style="color: #000000;"> item.Items;
+            </span><span style="color: #0000ff;">if</span> (!<span style="color: #000000;">item.StaticObjects.NeverAccessed)
+                staticObjects </span>=<span style="color: #000000;"> item.StaticObjects;
+
+            RedisSessionState state2 </span>= <span style="color: #0000ff;">new</span><span style="color: #000000;"> RedisSessionState(sessionItems, staticObjects, item.Timeout);
+
+            RedisBase.Item_Set</span>&lt;<span style="color: #0000ff;">string</span>&gt;<span style="color: #000000;">(id, state2.ToJson(), item.Timeout);
+        }
+
+        </span><span style="color: #0000ff;">#region</span> "未实现方法"
+
+        <span style="color: #0000ff;">public</span> <span style="color: #0000ff;">override</span> <span style="color: #0000ff;">void</span><span style="color: #000000;"> Dispose()
+        {
+            
+        }
+
+        </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">override</span> <span style="color: #0000ff;">void</span><span style="color: #000000;"> EndRequest(HttpContext context)
+        {
+            
+        }
+
+        </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">override</span> <span style="color: #0000ff;">void</span><span style="color: #000000;"> InitializeRequest(HttpContext context)
+        {
+            
+        }
+
+        </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">override</span> <span style="color: #0000ff;">void</span> ReleaseItemExclusive(HttpContext context, <span style="color: #0000ff;">string</span> id, <span style="color: #0000ff;">object</span><span style="color: #000000;"> lockId)
+        {
+        }
+
+        </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">override</span> <span style="color: #0000ff;">void</span> RemoveItem(HttpContext context, <span style="color: #0000ff;">string</span> id, <span style="color: #0000ff;">object</span><span style="color: #000000;"> lockId, SessionStateStoreData item)
+        {
+            RedisBase.Item_Remove(id);
+        }
+
+        </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">override</span> <span style="color: #0000ff;">void</span> ResetItemTimeout(HttpContext context, <span style="color: #0000ff;">string</span><span style="color: #000000;"> id)
+        {
+            
+        }
+
+        </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">override</span> <span style="color: #0000ff;">bool</span><span style="color: #000000;"> SetItemExpireCallback(SessionStateItemExpireCallback expireCallback)
+        {
+            </span><span style="color: #0000ff;">return</span> <span style="color: #0000ff;">true</span><span style="color: #000000;">;
+        }
+
+        </span><span style="color: #0000ff;">#endregion</span><span style="color: #000000;">
+
+    }
+    </span><span style="color: #0000ff;">internal</span> <span style="color: #0000ff;">sealed</span> <span style="color: #0000ff;">class</span><span style="color: #000000;"> SessionStateItem
+    {
+        </span><span style="color: #0000ff;">public</span> Dictionary&lt;<span style="color: #0000ff;">string</span>, <span style="color: #0000ff;">object</span>&gt;<span style="color: #000000;"> Dict;
+        </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">int</span><span style="color: #000000;"> Timeout;
+    }
+
+    </span><span style="color: #0000ff;">internal</span> <span style="color: #0000ff;">sealed</span> <span style="color: #0000ff;">class</span><span style="color: #000000;"> RedisSessionState
+    {
+        </span><span style="color: #0000ff;">internal</span><span style="color: #000000;"> ISessionStateItemCollection _sessionItems;
+        </span><span style="color: #0000ff;">internal</span><span style="color: #000000;"> HttpStaticObjectsCollection _staticObjects;
+        </span><span style="color: #0000ff;">internal</span> <span style="color: #0000ff;">int</span><span style="color: #000000;"> _timeout;
+
+        </span><span style="color: #0000ff;">internal</span> RedisSessionState(ISessionStateItemCollection sessionItems, HttpStaticObjectsCollection staticObjects, <span style="color: #0000ff;">int</span><span style="color: #000000;"> timeout)
+        {
+            </span><span style="color: #0000ff;">this</span><span style="color: #000000;">.Copy(sessionItems, staticObjects, timeout);
+        }
+
+        </span><span style="color: #0000ff;">internal</span> <span style="color: #0000ff;">void</span> Copy(ISessionStateItemCollection sessionItems, HttpStaticObjectsCollection staticObjects, <span style="color: #0000ff;">int</span><span style="color: #000000;"> timeout)
+        {
+            </span><span style="color: #0000ff;">this</span>._sessionItems =<span style="color: #000000;"> sessionItems;
+            </span><span style="color: #0000ff;">this</span>._staticObjects =<span style="color: #000000;"> staticObjects;
+            </span><span style="color: #0000ff;">this</span>._timeout =<span style="color: #000000;"> timeout;
+        }
+
+        </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">string</span><span style="color: #000000;"> ToJson()
+        {
+            </span><span style="color: #008000;">//</span><span style="color: #008000;"> 这里忽略_staticObjects这个成员。</span>
+
+            <span style="color: #0000ff;">if</span> (_sessionItems == <span style="color: #0000ff;">null</span> || _sessionItems.Count == <span style="color: #800080;">0</span><span style="color: #000000;">)
+            {
+                </span><span style="color: #0000ff;">return</span> <span style="color: #0000ff;">null</span><span style="color: #000000;">;
+            }
+
+            Dictionary</span>&lt;<span style="color: #0000ff;">string</span>, <span style="color: #0000ff;">object</span>&gt; dict = <span style="color: #0000ff;">new</span> Dictionary&lt;<span style="color: #0000ff;">string</span>, <span style="color: #0000ff;">object</span>&gt;<span style="color: #000000;">(_sessionItems.Count);
+
+            </span><span style="color: #0000ff;">string</span><span style="color: #000000;"> key;
+            NameObjectCollectionBase.KeysCollection keys </span>=<span style="color: #000000;"> _sessionItems.Keys;
+            </span><span style="color: #0000ff;">for</span> (<span style="color: #0000ff;">int</span> i = <span style="color: #800080;">0</span>; i &lt; keys.Count; i++<span style="color: #000000;">)
+            {
+                key </span>=<span style="color: #000000;"> keys[i];
+                dict.Add(key, _sessionItems[key]);
+            }
+
+            SessionStateItem item </span>= <span style="color: #0000ff;">new</span> SessionStateItem { Dict = dict, Timeout = <span style="color: #0000ff;">this</span><span style="color: #000000;">._timeout };
+
+            </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> JsonConvert.SerializeObject(item);
+        }
+
+        </span><span style="color: #0000ff;">public</span> <span style="color: #0000ff;">static</span> RedisSessionState FromJson(<span style="color: #0000ff;">string</span><span style="color: #000000;"> json)
+        {
+            </span><span style="color: #0000ff;">if</span> (<span style="color: #0000ff;">string</span><span style="color: #000000;">.IsNullOrEmpty(json))
+            {
+                </span><span style="color: #0000ff;">return</span> <span style="color: #0000ff;">null</span><span style="color: #000000;">;
+            }
+            </span><span style="color: #0000ff;">try</span><span style="color: #000000;">
+            {
+                SessionStateItem item </span>= JsonConvert.DeserializeObject&lt;SessionStateItem&gt;<span style="color: #000000;">(json);
+
+                SessionStateItemCollection collections </span>= <span style="color: #0000ff;">new</span><span style="color: #000000;"> SessionStateItemCollection();
+
+                </span><span style="color: #0000ff;">foreach</span> (KeyValuePair&lt;<span style="color: #0000ff;">string</span>, <span style="color: #0000ff;">object</span>&gt; kvp <span style="color: #0000ff;">in</span><span style="color: #000000;"> item.Dict)
+                {
+                    collections[kvp.Key] </span>=<span style="color: #000000;"> kvp.Value;
+                }
+
+                </span><span style="color: #0000ff;">return</span> <span style="color: #0000ff;">new</span> RedisSessionState(collections, <span style="color: #0000ff;">null</span><span style="color: #000000;">, item.Timeout);
+            }
+            </span><span style="color: #0000ff;">catch</span><span style="color: #000000;">
+            {
+                </span><span style="color: #0000ff;">return</span> <span style="color: #0000ff;">null</span><span style="color: #000000;">;
+            }
+        }
+    }</span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<div style="text-align: left;">使用<span style="color: #000000;">也很简单，修改web.config,如下图</span></div>
+<div style="text-align: left;"><span style="color: #000000;"><img src="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/336693-20150829113844156-532787596.png" alt=""></span></div>
+<div style="text-align: left;">&nbsp;</div>
+<div style="text-align: left;">然后可以保持原先代码不变,像Session["UserCode"]="admin"方式进行使用，但是现在的Session已经具备了分布式的特征,支持跨域。这里得说一下该方式的缺点,在GetItem和SetAndReleaseItemExclusive时需要对键值对进行反序列化和序列化操作,对于保存数据量大的情况反而性能相对于系统提供的方式大打折扣,所以使用的时候需要考虑自己的实际场景。</div>
+<div style="text-align: right;">&nbsp;</div>
+<div style="text-align: right;"><a href="http://www.cnblogs.com/yanweidie/p/4763556.html#_labelTop">回到顶部</a><a name="_label2"></a></div>
+<h1 class="title">总结　　</h1>
+<p>　 &nbsp; 本来分布式Session共享到上篇就完结了,但是由于方案的可行性差,还有更好的方案,所以花了点时间<span style="line-height: 1.5;">参考了前面MSND中的说明，和ASP.net源码中InProcSessionStateStore的实现,解决GetItemExclusive等方法的并发锁定问题,最终实现了Redis的存储方式，更加灵活方便。这里要感谢大家提的意见,让我又学会了一个知识点！</span></p>
+<p>&nbsp; &nbsp; &nbsp; 资源下载地址：<a href="http://files.cnblogs.com/files/yanweidie/ResidSessionDemo.rar" target="_blank">redis_demo</a></p>
+<p>　　svn下载地址：<a href="http://code.taobao.org/svn/ResidSessionDemo/" target="_blank">http://code.taobao.org/svn/ResidSessionDemo/</a></p>
+<p>　　本文参考:</p>
+<p>　　sessionstatestoreproviderbase定义：<a href="https://msdn.microsoft.com/zh-cn/library/system.web.sessionstate.sessionstatestoreproviderbase(VS.80).aspx" target="_blank">https://msdn.microsoft.com/zh-cn/library/system.web.sessionstate.sessionstatestoreproviderbase(VS.80).aspx</a></p>
+<p>　　sessionstatestoreproviderbase成员:<a href="https://msdn.microsoft.com/zh-cn/library/ms178587(v=vs.80).aspx" target="_blank">https://msdn.microsoft.com/zh-cn/library/ms178587(v=vs.80).aspx</a></p>
+<p>　　</p>
+<div class="articleFooter">
+<p> 如果，您认为阅读这篇博客让您有些收获，不妨点击一下右下角的<a id="btnRecommendMyBlog" href="javascript:void(0);">【<strong>推荐</strong>】</a>按钮。<br>
+如果，您希望更容易地发现我的新博客，不妨点击一下绿色通道的<a onclick="c_follow();" href="javascript:void(0);">【<strong>关注我</strong>】</a>。<br>
+因为，我的写作热情也离不开您的肯定支持。
+</p>
+<p>感谢您的阅读，如果您对我的博客所讲述的内容有兴趣，请继续关注我的后续博客，我是焰尾迭 。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/yanweidie/category/713361.html">分布式系统架构</a></div>
+<div id="EntryTag">标签: <a href="http://www.cnblogs.com/yanweidie/tag/RedisSessionStateStore/">RedisSessionStateStore</a>, <a href="http://www.cnblogs.com/yanweidie/tag/SessionStateStoreProviderBase/">SessionStateStoreProviderBase</a></div>
+<div id="blog_post_info"><div id="green_channel">
+<a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(4763556,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+<a id="green_channel_follow" onclick="c_follow();" href="javascript:void(0);">关注我</a>
+<a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a><a id="green_channel_contact" href="http://msg.cnblogs.com/send/%E7%84%B0%E5%B0%BE%E8%BF%AD" target="_blank">联系我</a>
+<a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/icon_weibo_24.png" alt=""></a>
+<a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+<div id="author_profile_info" class="author_profile_info">
+<a href="http://home.cnblogs.com/u/yanweidie/" target="_blank"><img src="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/u336693.gif" class="author_avatar" alt=""></a>
+<div id="author_profile_detail" class="author_profile_info">
+<a href="http://home.cnblogs.com/u/yanweidie/">焰尾迭</a><br>
+<a href="http://home.cnblogs.com/u/yanweidie/followees">关注 - 16</a><br>
+<a href="http://home.cnblogs.com/u/yanweidie/followers">粉丝 - 366</a>
+</div>
+</div>
+<div class="clear"></div>
+<div id="author_profile_honor"></div>
+<div id="author_profile_follow">
+    <a href="javascript:void(0);" onclick="c_follow();return false;">+加关注</a>
+</div>
+</div>
+<div id="div_digg">										
+    <div class="diggit" onclick="votePost(4763556,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">14</span>
+    </div>
+	<div class="buryit" onclick="votePost(4763556,&#39;Bury&#39;)"> 
+		<span class="burynum" id="bury_count">0</span>
+	</div>
+	<div class="clear"></div>	
+	<div class="diggword" id="digg_tips">
+    (请您对文章做出评价)
+    </div>	
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/yanweidie/p/4678095.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/yanweidie/p/4678095.html" title="发布于2015-08-17 08:46">分布式中使用Redis实现Session共享(二)</a><br><a href="http://www.cnblogs.com/yanweidie/p/3564062.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/yanweidie/p/3564062.html" title="发布于2015-09-12 15:37">开源任务管理平台TaskManager介绍</a><br></div>
+</div>
+
+
+	<div class="postDesc">posted on <span id="post-date">2015-08-29 18:11</span> <a href="http://www.cnblogs.com/yanweidie/">焰尾迭</a> 阅读(<span id="post_view_count">1130</span>) 评论(<span id="post_comment_count">10</span>)  <a href="http://i.cnblogs.com/EditPosts.aspx?postid=4763556" rel="nofollow">编辑</a> <a href="http://www.cnblogs.com/yanweidie/p/4763556.html#" onclick="AddToWz(4763556);return false;">收藏</a></div>
+</div>
+<script type="text/javascript">var allowComments=true,isLogined=false,cb_blogId=114902,cb_entryId=4763556,cb_blogApp=currentBlogApp,cb_blogUserGuid='91ae0150-efe9-e011-8ee0-842b2b196315',cb_entryCreatedDate='2015/8/29 18:11:00';loadViewCount(cb_entryId);</script>
+
+</div><a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"></div>
+<!--done-->
+<br>
+<div class="feedback_area_title">发表评论</div>
+<div class="feedbackNoItems"></div>
+	
+
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/yanweidie/p/4763556.html#3256730" class="layer">#1楼</a><a name="3256730" id="comment_anchor_3256730"></a>  <span class="comment_date">2015-08-29 20:25</span> | <a id="a_comment_author_3256730" class="feedbackmanagelink" href="http://www.cnblogs.com/weixiao520/" target="_blank">weixiao520</a> <a href="http://msg.cnblogs.com/send/weixiao520" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3256730" class="blog_comment_body">终于等来了啊</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3256730,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3256730,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3256730_avatar" style="display:none;">http://pic.cnblogs.com/face/481355/20130417130808.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/yanweidie/p/4763556.html#3256738" class="layer">#2楼</a><a name="3256738" id="comment_anchor_3256738"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2015-08-29 20:47</span> | <a id="a_comment_author_3256738" class="feedbackmanagelink" href="http://www.cnblogs.com/yanweidie/" target="_blank">焰尾迭</a> <a href="http://msg.cnblogs.com/send/%E7%84%B0%E5%B0%BE%E8%BF%AD" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3256738" class="blog_comment_body"><a href="http://www.cnblogs.com/yanweidie/p/4763556.html#3256730" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3256730);">@</a>weixiao520<br>谢谢支持</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3256738,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3256738,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3256738_avatar" style="display:none;">http://pic.cnblogs.com/face/u336693.gif?id=29100417</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/yanweidie/p/4763556.html#3257438" class="layer">#3楼</a><a name="3257438" id="comment_anchor_3257438"></a>  <span class="comment_date">2015-08-31 11:32</span> | <a id="a_comment_author_3257438" class="feedbackmanagelink" href="http://www.cnblogs.com/GuZhenYin/" target="_blank">GuZhenYin</a> <a href="http://msg.cnblogs.com/send/GuZhenYin" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3257438" class="blog_comment_body">问问博主 这个扩展的Session 可以在SignalR里面使用么?</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3257438,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3257438,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3257438_avatar" style="display:none;">http://pic.cnblogs.com/face/653851/20140724135148.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/yanweidie/p/4763556.html#3257442" class="layer">#4楼</a><a name="3257442" id="comment_anchor_3257442"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2015-08-31 11:34</span> | <a id="a_comment_author_3257442" class="feedbackmanagelink" href="http://www.cnblogs.com/yanweidie/" target="_blank">焰尾迭</a> <a href="http://msg.cnblogs.com/send/%E7%84%B0%E5%B0%BE%E8%BF%AD" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3257442" class="blog_comment_body"><a href="http://www.cnblogs.com/yanweidie/p/4763556.html#3257438" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3257438);">@</a>GuZhenYin<br>可以的,使用这个自定义的Session可以不修改原先的代码</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3257442,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3257442,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3257442_avatar" style="display:none;">http://pic.cnblogs.com/face/u336693.gif?id=29100417</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/yanweidie/p/4763556.html#3257444" class="layer">#5楼</a><a name="3257444" id="comment_anchor_3257444"></a>  <span class="comment_date">2015-08-31 11:36</span> | <a id="a_comment_author_3257444" class="feedbackmanagelink" href="http://www.cnblogs.com/GuZhenYin/" target="_blank">GuZhenYin</a> <a href="http://msg.cnblogs.com/send/GuZhenYin" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3257444" class="blog_comment_body"><a href="http://www.cnblogs.com/yanweidie/p/4763556.html#3257442" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3257442);">@</a>焰尾迭<br> - - ,主要是SignalR2.0里面.. 在HttpContext.Current.Session里面...<br>Cookie什么的都获取的到 就Session一直是空的..不知道博主有研究过么 - -.</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3257444,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3257444,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3257444_avatar" style="display:none;">http://pic.cnblogs.com/face/653851/20140724135148.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/yanweidie/p/4763556.html#3257445" class="layer">#6楼</a><a name="3257445" id="comment_anchor_3257445"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2015-08-31 11:38</span> | <a id="a_comment_author_3257445" class="feedbackmanagelink" href="http://www.cnblogs.com/yanweidie/" target="_blank">焰尾迭</a> <a href="http://msg.cnblogs.com/send/%E7%84%B0%E5%B0%BE%E8%BF%AD" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3257445" class="blog_comment_body"><a href="http://www.cnblogs.com/yanweidie/p/4763556.html#3257444" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3257444);">@</a>GuZhenYin<br>你说使用了这个自定义的Session吗，还是没使用就是这个样子的。还没使用过SignalR2.0，有示例代码可以参考不</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3257445,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3257445,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3257445_avatar" style="display:none;">http://pic.cnblogs.com/face/u336693.gif?id=29100417</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/yanweidie/p/4763556.html#3257447" class="layer">#7楼</a><a name="3257447" id="comment_anchor_3257447"></a>  <span class="comment_date">2015-08-31 11:39</span> | <a id="a_comment_author_3257447" class="feedbackmanagelink" href="http://www.cnblogs.com/GuZhenYin/" target="_blank">GuZhenYin</a> <a href="http://msg.cnblogs.com/send/GuZhenYin" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3257447" class="blog_comment_body">没有使用自定义Session会出现这种情况.. 自定义的Session还不知道 暂时没实践..</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3257447,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3257447,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3257447_avatar" style="display:none;">http://pic.cnblogs.com/face/653851/20140724135148.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/yanweidie/p/4763556.html#3257450" class="layer">#8楼</a><a name="3257450" id="comment_anchor_3257450"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2015-08-31 11:40</span> | <a id="a_comment_author_3257450" class="feedbackmanagelink" href="http://www.cnblogs.com/yanweidie/" target="_blank">焰尾迭</a> <a href="http://msg.cnblogs.com/send/%E7%84%B0%E5%B0%BE%E8%BF%AD" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3257450" class="blog_comment_body"><a href="http://www.cnblogs.com/yanweidie/p/4763556.html#3257447" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3257447);">@</a>GuZhenYin<br>有示例代码不，发个过来研究一下</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3257450,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3257450,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3257450_avatar" style="display:none;">http://pic.cnblogs.com/face/u336693.gif?id=29100417</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/yanweidie/p/4763556.html#3260864" class="layer">#9楼</a><a name="3260864" id="comment_anchor_3260864"></a>  <span class="comment_date">2015-09-06 15:14</span> | <a id="a_comment_author_3260864" class="feedbackmanagelink" href="http://www.cnblogs.com/leilinkang/" target="_blank">AndOnly</a> <a href="http://msg.cnblogs.com/send/AndOnly" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3260864" class="blog_comment_body">看了楼主的这个系列，挺精彩的，我要像你学习。另:Servicestack.Redis在4.0之后都是收费的了，楼主有没有考虑过StackExchange.Redis呢。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3260864,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3260864,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/yanweidie/p/4763556.html#3267460" class="layer">#10楼</a><a name="3267460" id="comment_anchor_3267460"></a><span id="comment-maxId" style="display:none;">3267460</span><span id="comment-maxDate" style="display:none;">2015/9/16 0:20:55</span>  <span class="comment_date">2015-09-16 00:20</span> | <a id="a_comment_author_3267460" class="feedbackmanagelink" href="http://home.cnblogs.com/u/758821/" target="_blank">如果FLY</a> <a href="http://msg.cnblogs.com/send/%E5%A6%82%E6%9E%9CFLY" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3267460" class="blog_comment_body">先Mark，明天再看</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3267460,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3267460,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	<div id="comments_pager_bottom"></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" id="lnk_RefreshComments" onclick="return RefreshCommentList();">刷新评论</a><a href="http://www.cnblogs.com/yanweidie/p/4763556.html#" onclick="return RefreshPage();">刷新页面</a><a href="http://www.cnblogs.com/yanweidie/p/4763556.html#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login(&#39;commentform&#39;);">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="site_nav_under"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br><a href="http://www.rongcloud.cn/" target="_blank">【推荐】融云即时通讯云－专注为 App 开发者提供IM云服务</a><br><a href="http://click.aliyun.com/m/1328/" target="_blank">【专享】阿里云9折优惠码：bky758</a><br></div>
+<div id="opt_under_post"></div>
+<script type="text/javascript">
+    var enableGoogleAd = canShowAdsense(); 
+    fixPostBodyFormat();
+</script>
+<div id="google_ad_c1" class="c_ad_block"><a href="http://job.cnblogs.com/" target="_blank"><img width="300" height="250" src="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/job_300_250.jpg" alt=""></a></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="http://news.cnblogs.com/n/531006/" target="_blank">通富微电收购AMD子公司85%股份 增强封装业务</a><br> ·  <a href="http://news.cnblogs.com/n/531005/" target="_blank">支付宝推出“扶老人险”：最高可获2万元法律诉讼费用</a><br> ·  <a href="http://news.cnblogs.com/n/531004/" target="_blank">忘记Windows系统密码？这个办法轻松帮你破解</a><br> ·  <a href="http://news.cnblogs.com/n/531003/" target="_blank">美国青少年最爱用照片分享应用Instagram</a><br> ·  <a href="http://news.cnblogs.com/n/531002/" target="_blank">亚马逊申请专利 可能有兴趣开发增强现实眼镜</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="google_ad_c2" class="c_ad_block"><a href="http://e.jikexueyuan.com/python.html?hmsr=cnb_banner_python_09.14" target="_blank"><img width="468" height="60" src="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/24442-20150914101340023-1721833902.jpg" alt=""></a></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/530389/" target="_blank">人，技术与流程</a><br> ·  <a href="http://kb.cnblogs.com/page/530044/" target="_blank">HTTPS背后的加密算法</a><br> ·  <a href="http://kb.cnblogs.com/page/529285/" target="_blank">下一代云计算模式：Docker正掀起个性化商业革命</a><br> ·  <a href="http://kb.cnblogs.com/page/528495/" target="_blank">野生程序员的故事</a><br> ·  <a href="http://kb.cnblogs.com/page/528972/" target="_blank">状态机的两种写法</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+$(function () {
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 200);
+});
+</script>
+</div>
+
+		</div>
+	</div>
+	<!-- left ends -->
+	<!-- right starts -->
+	<div id="right">
+		<!-- 右侧工具部分 -->
+		<div id="right_content">
+	
+			
+<!--done-->
+<h2 class="listtitle">公告</h2>
+<div class="newsItem">
+	<div id="blog-news">
+<div id="blog-news"><hr>个人经典作品：<br>
+1：<a href="http://www.cnblogs.com/yanweidie/p/3838765.html" target="_blank"><font color="red">数据字典生成工具</font></a><br>
+2：<a href="http://www.cnblogs.com/yanweidie/p/3838765.html" target="_blank"><font color="red">数据字典文档生成工具</font></a><br>
+3：<a href="http://www.cnblogs.com/yanweidie/p/3542670.html" target="_blank"><font color="red">windows服务安装卸载工具</font></a><br>
+4：<a href="http://www.cnblogs.com/yanweidie/p/3564062.html" target="_blank"><font color="red">任务管理平台TaskManager</font></a><br>
+<br>
+QQ热线：<a href="tencent://message/?uin=353166224&Site=http://www.qq.com&Menu=yes" target="_blank"><img title="欢迎与我联系" align="absmiddle" alt="欢迎与我联系" src="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/pa" border="0"></a><br>
+Email：<a href="mailto:353166224@qq.com">353166224@qq.com</a>
+<hr>
+<p style="text-align: center;">引用本博客相关文章及资源</p>
+<p style="text-align: center;">请注明作者和来源地址! </p>
+<hr>
+<p>博客园交友 QQ群：<br>
+1：<font color="red"><strong><a href="http://jq.qq.com/?_wv=1027&k=OuxgRi" target="_blank">147425783 QQ群</a></strong></font>(进/500)<br>
+</p></div><div id="profile_block">昵称：<a href="http://home.cnblogs.com/u/yanweidie/">焰尾迭</a><br>园龄：<a href="http://home.cnblogs.com/u/yanweidie/" title="入园时间：2011-09-29">4年</a><br>粉丝：<a href="http://home.cnblogs.com/u/yanweidie/followers/">366</a><br>关注：<a href="http://home.cnblogs.com/u/yanweidie/followees/">16</a><div id="p_b_follow"><a href="javascript:void(0);" onclick="cnblogs.UserManager.FollowBlogger(&#39;91ae0150-efe9-e011-8ee0-842b2b196315&#39;)">+加关注</a></div></div></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+	
+			<div id="calendar"><div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="日历">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2015/09/01&#39;);return false;">&lt;</a></td><td align="center">2015年10月</td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2015/11/01&#39;);return false;">&gt;</a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" align="center" abbr="日" scope="col">日</th><th class="CalDayHeader" align="center" abbr="一" scope="col">一</th><th class="CalDayHeader" align="center" abbr="二" scope="col">二</th><th class="CalDayHeader" align="center" abbr="三" scope="col">三</th><th class="CalDayHeader" align="center" abbr="四" scope="col">四</th><th class="CalDayHeader" align="center" abbr="五" scope="col">五</th><th class="CalDayHeader" align="center" abbr="六" scope="col">六</th></tr><tr><td class="CalOtherMonthDay" align="center">27</td><td class="CalOtherMonthDay" align="center">28</td><td class="CalOtherMonthDay" align="center">29</td><td class="CalOtherMonthDay" align="center">30</td><td align="center">1</td><td align="center">2</td><td class="CalWeekendDay" align="center">3</td></tr><tr><td class="CalWeekendDay" align="center">4</td><td align="center">5</td><td align="center">6</td><td align="center">7</td><td align="center">8</td><td align="center">9</td><td class="CalWeekendDay" align="center">10</td></tr><tr><td class="CalWeekendDay" align="center">11</td><td align="center">12</td><td align="center">13</td><td align="center">14</td><td align="center">15</td><td align="center">16</td><td class="CalWeekendDay" align="center">17</td></tr><tr><td class="CalTodayDay" align="center">18</td><td align="center">19</td><td align="center">20</td><td align="center">21</td><td align="center">22</td><td align="center">23</td><td class="CalWeekendDay" align="center">24</td></tr><tr><td class="CalWeekendDay" align="center">25</td><td align="center">26</td><td align="center">27</td><td align="center">28</td><td align="center">29</td><td align="center">30</td><td class="CalWeekendDay" align="center">31</td></tr><tr><td class="CalOtherMonthDay" align="center">1</td><td class="CalOtherMonthDay" align="center">2</td><td class="CalOtherMonthDay" align="center">3</td><td class="CalOtherMonthDay" align="center">4</td><td class="CalOtherMonthDay" align="center">5</td><td class="CalOtherMonthDay" align="center">6</td><td class="CalOtherMonthDay" align="center">7</td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script></div>
+			
+				<div id="leftcontentcontainer">
+					<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk"></div>
+<div id="widget_my_google" class="div_my_zzk"><input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk">&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk"></div>
+</div>
+</div>
+
+</div><div id="sidebar_shortcut" class="sidebar-block">
+<h3 class="catListTitle">常用链接</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/yanweidie/p/" title="我的博客的随笔列表">我的随笔</a></li><li><a href="http://www.cnblogs.com/yanweidie/MyComments.html" title="我发表过的评论列表">我的评论</a></li><li><a href="http://www.cnblogs.com/yanweidie/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li><li><a href="http://www.cnblogs.com/yanweidie/RecentComments.html" title="我的博客的评论列表">最新评论</a></li><li><a href="http://www.cnblogs.com/yanweidie/tag/" title="我的博客的标签列表">我的标签</a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+
+</div></div><div id="sidebar_recentposts" class="sidebar-block">
+<h3 class="catListTitle">最新随笔</h3>
+<div class="RecentComment" id="RecentPosts">
+<ul style="word-break:break-all">
+<li><a href="http://www.cnblogs.com/yanweidie/p/4800948.html">1. 使用TaskManager爬取2万条代理IP实现自动投票功能</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/3564062.html">2. 开源任务管理平台TaskManager介绍</a></li><li><a href="./分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园_files/分布式中Redis实现Session终结篇 - 焰尾迭 - 博客园.html">3. 分布式中Redis实现Session终结篇</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4678095.html">4. 分布式中使用Redis实现Session共享(二)</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4719692.html">5. 分布式中使用Redis实现Session共享(一)</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4658136.html">6. nginx+iis实现负载均衡</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4605212.html">7. Newtonsoft.Json高级用法</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4516164.html">8. 在线文档预览方案-office web apps</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4452526.html">9. 我的前端学习历程</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4448671.html">10. 我是怎么使用最短路径算法解决动态联动问题的</a></li>
+</ul>
+</div>
+</div><div id="sidebar_toptags" class="sidebar-block">
+<h3 class="catListTitle">我的标签</h3>
+<div id="MyTag">
+<ul>
+<li><a href="http://www.cnblogs.com/yanweidie/tag/%E6%95%B0%E6%8D%AE%E5%AD%97%E5%85%B8%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7/">数据字典生成工具</a>(9)</li><li><a href="http://www.cnblogs.com/yanweidie/tag/%E6%95%B0%E6%8D%AE%E5%AD%97%E5%85%B8%E6%96%87%E6%A1%A3%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7/">数据字典文档生成工具</a>(8)</li><li><a href="http://www.cnblogs.com/yanweidie/tag/PowerDesign/">PowerDesign</a>(8)</li><li><a href="http://www.cnblogs.com/yanweidie/tag/Execl/">Execl</a>(7)</li><li><a href="http://www.cnblogs.com/yanweidie/tag/Word/">Word</a>(7)</li><li><a href="http://www.cnblogs.com/yanweidie/tag/SQL/">SQL</a>(5)</li><li><a href="http://www.cnblogs.com/yanweidie/tag/NVelocity/">NVelocity</a>(3)</li><li><a href="http://www.cnblogs.com/yanweidie/tag/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/">分布式系统架构</a>(3)</li><li><a href="http://www.cnblogs.com/yanweidie/tag/%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90/">代码生成</a>(3)</li><li><a href="http://www.cnblogs.com/yanweidie/tag/HTML/">HTML</a>(3)</li><li><a href="http://www.cnblogs.com/yanweidie/tag/">更多</a></li>
+</ul>
+</div></div><div id="sidebar_categories">
+<!--done-->
+
+		<h1 class="catListTitle">随笔分类<span style="font-size:11px;font-weight:normal">(36)</span></h1>
+		
+				<ul>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_0_Link_0" class="listitem" href="http://www.cnblogs.com/yanweidie/category/554647.html">C#(9)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_0_Link_1" class="listitem" href="http://www.cnblogs.com/yanweidie/category/551734.html">SQL(6)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_0_Link_2" class="listitem" href="http://www.cnblogs.com/yanweidie/category/551733.html">Window服务(4)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_0_Link_3" class="listitem" href="http://www.cnblogs.com/yanweidie/category/551746.html">XML</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_0_Link_4" class="listitem" href="http://www.cnblogs.com/yanweidie/category/713361.html">分布式系统架构(4)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_0_Link_5" class="listitem" href="http://www.cnblogs.com/yanweidie/category/691143.html">前端学习(1)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_0_Link_6" class="listitem" href="http://www.cnblogs.com/yanweidie/category/594364.html">数据字典生成工具系列文章(10)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_0_Link_7" class="listitem" href="http://www.cnblogs.com/yanweidie/category/680499.html">算法系列(2)</a>
+				</li>
+			
+				</ul>
+			
+	
+		<h1 class="catListTitle">随笔档案<span style="font-size:11px;font-weight:normal">(29)</span></h1>
+		
+				<ul>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_1_Link_0" class="listitem" href="http://www.cnblogs.com/yanweidie/archive/2015/09.html">2015年9月 (2)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_1_Link_1" class="listitem" href="http://www.cnblogs.com/yanweidie/archive/2015/08.html">2015年8月 (3)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_1_Link_2" class="listitem" href="http://www.cnblogs.com/yanweidie/archive/2015/07.html">2015年7月 (1)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_1_Link_3" class="listitem" href="http://www.cnblogs.com/yanweidie/archive/2015/06.html">2015年6月 (1)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_1_Link_4" class="listitem" href="http://www.cnblogs.com/yanweidie/archive/2015/05.html">2015年5月 (2)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_1_Link_5" class="listitem" href="http://www.cnblogs.com/yanweidie/archive/2015/04.html">2015年4月 (2)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_1_Link_6" class="listitem" href="http://www.cnblogs.com/yanweidie/archive/2015/03.html">2015年3月 (3)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_1_Link_7" class="listitem" href="http://www.cnblogs.com/yanweidie/archive/2014/08.html">2014年8月 (3)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_1_Link_8" class="listitem" href="http://www.cnblogs.com/yanweidie/archive/2014/07.html">2014年7月 (5)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_1_Link_9" class="listitem" href="http://www.cnblogs.com/yanweidie/archive/2014/06.html">2014年6月 (3)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_1_Link_10" class="listitem" href="http://www.cnblogs.com/yanweidie/archive/2014/02.html">2014年2月 (3)</a>
+				</li>
+			
+				<li class="catList">
+				 <a id="CatList_LinkList_1_Link_11" class="listitem" href="http://www.cnblogs.com/yanweidie/archive/2013/07.html">2013年7月 (1)</a>
+				</li>
+			
+				</ul>
+			
+	
+		<h1 class="catListTitle">css</h1>
+		
+	
+</div><div id="sidebar_scorerank" class="sidebar-block">
+<h3>积分与排名</h3>
+<ul>
+	<li>
+		积分 -
+		57897
+	</li><li>
+		排名 -
+		3476
+	</li>
+</ul>
+</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap">
+<h3 class="catListTitle">最新评论</h3>
+<div class="RecentComment" id="RecentComments">
+	<div id="RecentCommentsBlock"><ul>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/yanweidie/p/4719692.html#3280704">1. Re:分布式中使用Redis实现Session共享(一)</a></li>
+    <li class="recent_comment_body">@索马直接用命令行运行...</li>
+    <li class="recent_comment_author">--扯</li>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/yanweidie/p/3564062.html#3273549">2. Re:开源任务管理平台TaskManager介绍</a></li>
+    <li class="recent_comment_body">方便加个Q么，我有点疑问想咨询一下。<br>QQ：51233906<br>谢谢</li>
+    <li class="recent_comment_author">--Eric.HT</li>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/yanweidie/p/3564062.html#3272430">3. Re:开源任务管理平台TaskManager介绍</a></li>
+    <li class="recent_comment_body">@Eric.HT你下branch吧，这个是开发分支，新功能最先都是在branch上开发的，稳定了才会同步到trunk 主干上...</li>
+    <li class="recent_comment_author">--焰尾迭</li>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/yanweidie/p/3564062.html#3272422">4. Re:开源任务管理平台TaskManager介绍</a></li>
+    <li class="recent_comment_body">楼主svn中，branch和trunk  是如何安排的，我应该下哪个？</li>
+    <li class="recent_comment_author">--Eric.HT</li>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/yanweidie/p/3564062.html#3272393">5. Re:开源任务管理平台TaskManager介绍</a></li>
+    <li class="recent_comment_body">@aaqylh你提议的一个任务一个日志文件的功能，我已经实现了，可以获取最新代码，或者直接下载使用包就行了，有问题再联系我...</li>
+    <li class="recent_comment_author">--焰尾迭</li>
+</ul>
+</div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<h3 class="catListTitle">阅读排行榜</h3>
+<div class="RecentComment" id="TopViewPosts"> 
+	<div id="TopViewPostsBlock"><ul><li><a href="http://www.cnblogs.com/yanweidie/p/3537144.html">1. Quartz Cron表达式 在线生成器(13527)</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4658136.html">2. nginx+iis实现负载均衡(8223)</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4605212.html">3. Newtonsoft.Json高级用法(8178)</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4452526.html">4. 我的前端学习历程(5736)</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4719692.html">5. 分布式中使用Redis实现Session共享(一)(5709)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap">
+<h3 class="catListTitle">评论排行榜</h3>
+<div class="RecentComment" id="TopCommentsPosts">
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="http://www.cnblogs.com/yanweidie/p/3564062.html">1. 开源任务管理平台TaskManager介绍(61)</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4658136.html">2. nginx+iis实现负载均衡(61)</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4605212.html">3. Newtonsoft.Json高级用法(60)</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4719692.html">4. 分布式中使用Redis实现Session共享(一)(48)</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4516164.html">5. 在线文档预览方案-office web apps(39)</a></li></ul></div>
+</div></div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div class="RecentComment">
+	<div id="TopDiggPostsBlock"><ul><li><a href="http://www.cnblogs.com/yanweidie/p/4605212.html">1. Newtonsoft.Json高级用法(132)</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4658136.html">2. nginx+iis实现负载均衡(124)</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4452526.html">3. 我的前端学习历程(80)</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4719692.html">4. 分布式中使用Redis实现Session共享(一)(68)</a></li><li><a href="http://www.cnblogs.com/yanweidie/p/4354600.html">5. 数据字典生成工具之旅(8)：SQL查询表的约束默认值等信息(62)</a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+				</div>
+			
+		</div>
+		<!-- //右侧工具部分 -->
+		<div id="footer">
+			
+<!--done-->
+Copyright ©2015 焰尾迭
+		</div>
+	</div>
+	<!-- right ends -->
+	<div class="clear"></div>
+	
+</div>
+
+
+
+</body></html>

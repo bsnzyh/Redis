@@ -1,0 +1,1 @@
+redis-server.exe -p 6389

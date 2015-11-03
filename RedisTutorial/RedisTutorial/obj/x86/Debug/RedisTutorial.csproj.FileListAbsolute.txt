@@ -1,0 +1,43 @@
+c:\users\geffzhang\documents\visual studio 2010\Projects\RedisTutorial\RedisTutorial\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\geffzhang\Documents\Visual Studio 2010\Projects\RedisTutorial\RedisTutorial\bin\Debug\RedisTutorial.exe.config
+C:\Users\geffzhang\Documents\Visual Studio 2010\Projects\RedisTutorial\RedisTutorial\bin\Debug\RedisTutorial.exe
+C:\Users\geffzhang\Documents\Visual Studio 2010\Projects\RedisTutorial\RedisTutorial\bin\Debug\RedisTutorial.pdb
+C:\Users\geffzhang\Documents\Visual Studio 2010\Projects\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Common.dll
+C:\Users\geffzhang\Documents\Visual Studio 2010\Projects\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Interfaces.dll
+C:\Users\geffzhang\Documents\Visual Studio 2010\Projects\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Redis.dll
+C:\Users\geffzhang\Documents\Visual Studio 2010\Projects\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Text.dll
+C:\Users\geffzhang\Documents\Visual Studio 2010\Projects\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Common.pdb
+C:\Users\geffzhang\Documents\Visual Studio 2010\Projects\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Interfaces.pdb
+C:\Users\geffzhang\Documents\Visual Studio 2010\Projects\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Redis.pdb
+C:\Users\geffzhang\Documents\Visual Studio 2010\Projects\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Redis.xml
+C:\Users\geffzhang\Documents\Visual Studio 2010\Projects\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Text.pdb
+C:\Users\geffzhang\Documents\Visual Studio 2010\Projects\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Text.xml
+C:\Users\geffzhang\Documents\Visual Studio 2010\Projects\RedisTutorial\RedisTutorial\obj\x86\Debug\RedisTutorial.exe
+C:\Users\geffzhang\Documents\Visual Studio 2010\Projects\RedisTutorial\RedisTutorial\obj\x86\Debug\RedisTutorial.pdb
+F:\培训资料\服务器架构讲座资料\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\RedisTutorial.exe.config
+F:\培训资料\服务器架构讲座资料\RedisTutorial\RedisTutorial\RedisTutorial\obj\x86\Debug\RedisTutorial.exe
+F:\培训资料\服务器架构讲座资料\RedisTutorial\RedisTutorial\RedisTutorial\obj\x86\Debug\RedisTutorial.pdb
+F:\培训资料\服务器架构讲座资料\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\RedisTutorial.exe
+F:\培训资料\服务器架构讲座资料\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\RedisTutorial.pdb
+F:\培训资料\服务器架构讲座资料\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Common.pdb
+F:\培训资料\服务器架构讲座资料\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Interfaces.pdb
+F:\培训资料\服务器架构讲座资料\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Redis.pdb
+F:\培训资料\服务器架构讲座资料\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Redis.xml
+F:\培训资料\服务器架构讲座资料\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Text.pdb
+F:\培训资料\服务器架构讲座资料\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Text.xml
+F:\培训资料\服务器架构讲座资料\RedisTutorial\RedisTutorial\RedisTutorial\obj\x86\Debug\RedisTutorial.csprojResolveAssemblyReference.cache
+E:\传智播客\7期班\2013-9-25 分布式\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\RedisTutorial.exe.config
+E:\传智播客\7期班\2013-9-25 分布式\RedisTutorial\RedisTutorial\RedisTutorial\obj\x86\Debug\RedisTutorial.exe
+E:\传智播客\7期班\2013-9-25 分布式\RedisTutorial\RedisTutorial\RedisTutorial\obj\x86\Debug\RedisTutorial.pdb
+G:\BaiduYunDownload\00专题\广州11期\20140310 网站的发展，负载均衡，分布式缓存，分表，分库，读写分离\资源\资源\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\RedisTutorial.exe.config
+G:\BaiduYunDownload\00专题\广州11期\20140310 网站的发展，负载均衡，分布式缓存，分表，分库，读写分离\资源\资源\RedisTutorial\RedisTutorial\RedisTutorial\obj\x86\Debug\RedisTutorial.exe
+G:\BaiduYunDownload\00专题\广州11期\20140310 网站的发展，负载均衡，分布式缓存，分表，分库，读写分离\资源\资源\RedisTutorial\RedisTutorial\RedisTutorial\obj\x86\Debug\RedisTutorial.pdb
+G:\BaiduYunDownload\00专题\广州11期\20140310 网站的发展，负载均衡，分布式缓存，分表，分库，读写分离\资源\资源\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\RedisTutorial.exe
+G:\BaiduYunDownload\00专题\广州11期\20140310 网站的发展，负载均衡，分布式缓存，分表，分库，读写分离\资源\资源\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\RedisTutorial.pdb
+G:\BaiduYunDownload\00专题\广州11期\20140310 网站的发展，负载均衡，分布式缓存，分表，分库，读写分离\资源\资源\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Common.pdb
+G:\BaiduYunDownload\00专题\广州11期\20140310 网站的发展，负载均衡，分布式缓存，分表，分库，读写分离\资源\资源\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Interfaces.pdb
+G:\BaiduYunDownload\00专题\广州11期\20140310 网站的发展，负载均衡，分布式缓存，分表，分库，读写分离\资源\资源\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Redis.pdb
+G:\BaiduYunDownload\00专题\广州11期\20140310 网站的发展，负载均衡，分布式缓存，分表，分库，读写分离\资源\资源\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Redis.xml
+G:\BaiduYunDownload\00专题\广州11期\20140310 网站的发展，负载均衡，分布式缓存，分表，分库，读写分离\资源\资源\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Text.pdb
+G:\BaiduYunDownload\00专题\广州11期\20140310 网站的发展，负载均衡，分布式缓存，分表，分库，读写分离\资源\资源\RedisTutorial\RedisTutorial\RedisTutorial\bin\Debug\ServiceStack.Text.xml
+G:\BaiduYunDownload\00专题\广州11期\20140310 网站的发展，负载均衡，分布式缓存，分表，分库，读写分离\资源\资源\RedisTutorial\RedisTutorial\RedisTutorial\obj\x86\Debug\RedisTutorial.csprojResolveAssemblyReference.cache

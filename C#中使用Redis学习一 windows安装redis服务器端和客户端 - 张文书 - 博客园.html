@@ -1,0 +1,334 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- saved from url=(0042)http://www.cnblogs.com/mzws/p/redis1.html? -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script async="" src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/analytics.js"></script>
+
+<title>C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园</title>
+<link type="text/css" rel="stylesheet" href="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/bundle-Autumn.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/mzws/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/mzws/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/mzws/wlwmanifest.xml">
+<script src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/jquery.js" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'mzws', cb_enable_mathjax=false;</script>
+<script src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/blog-common.js" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<table cellspacing="0" cellpadding="0" width="100%" border="0" class="banner" height="250" background="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/bg_banner.jpg">
+        <tbody><tr>
+            <td width="61">
+                &nbsp;
+            </td>
+            <td width="236" align="center">
+                
+<br><br><br><br><br><br><br>
+<div id="header">
+	<span>
+		<a id="Header1_HeaderTitle" href="http://www.cnblogs.com/mzws/">张文书</a><br><br>
+		
+	</span>
+</div>
+            </td>
+            <td style="padding-bottom: 30px" align="center" valign="bottom">
+                &nbsp;
+            </td>
+        </tr>
+</tbody></table>
+<table align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
+    <tbody><tr>
+        <td width="60">
+            &nbsp;
+        </td>
+        <td width="180" valign="top" style="border-left: solid 1px #CCCCCC; border-right: solid 1px #CCCCCC">
+            <table align="center" width="100%" height="1400" cellspacing="0" cellpadding="5" border="0" bgcolor="white">
+                <tbody><tr>
+                    <td class="banner" valign="top" style="padding-top: 0px">
+                        
+                            
+<div class="news"><div id="blog-news"><div id="profile_block">昵称：<a href="http://home.cnblogs.com/u/mzws/">张文书</a><br>园龄：<a href="http://home.cnblogs.com/u/mzws/" title="入园时间：2012-06-06">3年3个月</a><br>粉丝：<a href="http://home.cnblogs.com/u/mzws/followers/">30</a><br>关注：<a href="http://home.cnblogs.com/u/mzws/followees/">4</a><div id="p_b_follow"><a href="javascript:void(0);" onclick="cnblogs.UserManager.FollowBlogger(&#39;c7686520-8caf-e111-aa3f-842b2b196315&#39;)">+加关注</a></div></div></div><script type="text/javascript">loadBlogNews();</script></div>
+
+                            <div id="blog-sidecolumn"></div><script type="text/javascript">loadBlogSideColumn();</script>
+                        
+                        <br>
+                        <center>
+                            Powered by: <a href="http://www.cnblogs.com/">博客园</a><br>
+                            模板提供：<a href="http://blog.hjenglish.com/">沪江博客</a>
+                        </center>
+                    </td>
+                </tr>
+            </tbody></table>
+        </td>
+        <td valign="top" style="padding: 0">
+            <table align="center" width="100%" height="1400" cellspacing="0" cellpadding="5" border="0" bgcolor="white" class="index">
+                <tbody><tr>
+                    <td class="banner" valign="top">
+                        <center>
+                            <a id="MyLinks1_HomeLink" class="menu" href="http://www.cnblogs.com/">博客园</a> | 
+<a id="MyLinks1_MyHomeLink" class="menu" href="http://www.cnblogs.com/mzws/">首页</a> | 
+<a id="MyLinks1_NewPostLink" class="menu" rel="nofollow" href="http://i.cnblogs.com/EditPosts.aspx?opt=1">发新随笔</a> | 
+<a id="MyLinks1_NewArticleLink" class="menu" href="http://www.cnblogs.com/EnterMyBlog.aspx?NewArticle=1">发新文章</a> | 
+<a id="MyLinks1_ContactLink" accesskey="9" class="menu" rel="nofollow" href="http://msg.cnblogs.com/send/%E5%BC%A0%E6%96%87%E4%B9%A6">联系</a> | 
+<a id="MyLinks1_Syndication" class="menu" href="http://www.cnblogs.com/mzws/rss">订阅</a><a id="MyLinks1_XMLLink" href="http://www.cnblogs.com/mzws/rss"><img src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/xml.gif" alt="订阅"></a> | 
+<a id="MyLinks1_Admin" class="menu" rel="nofollow" href="http://i.cnblogs.com/">管理</a>
+
+                        </center>
+                        
+<div id="post_detail">
+<div class="block">
+	<h1 class="block_title"><a id="cb_post_title_url" href="http://www.cnblogs.com/mzws/p/redis1.html">C#中使用Redis学习一 windows安装redis服务器端和客户端</a></h1>
+	<div class="post">
+		<div class="postcontent">
+			<div id="cnblogs_post_body"><p><span style="background-color: #00ccff;"><span style="background-color: #ffffff; color: #258fb8;"><strong><span style="font-size: 18pt;">学习背景</span></strong></span></span></p>
+<hr>
+<p><span style="color: #000000;">&nbsp;　　今天是2015年1月2日，新年刚开始的第二天，先祝大家元旦快乐啦（迟到的祝福吧^_^）。前段时间一直写Jquery插件开发系列博文，这个系列文章暂停一段时间，最近一直在看redis，我将把redis作为一个系列写一下我的学习历程。正好现在项目中使用了redis，本着学习探索的精神，准备写一下我对redis的一个学习历程和自己的一点感悟。在学习过程中也走了很多弯路，希望能对看这篇博文的朋友们带来点帮助。也算是写这边博文的最大目的了。</span></p>
+<p><span style="color: #000000;">　　我在认识redis之前没有接触过任何NoSql思想。对NoSql的了解也仅仅限于道听途说，听得我是云里雾里啊。当时我也不以为然，认为现有的存储方式已经能满足“所有”需求了，无需使用那些“所谓”的新产品吧。在此，我对当时的无知感到羞愧。所以，要相信实物存在就说明有它存在的道理和需要。况且对于程序猿来说，nosql是如此的好。</span></p>
+<p><span style="color: #000000;">　　有些知识不是靠听别人说，或是看一两篇文章就能深入理解的。因为你看的东西或是项目中用的知识可能都是别人“咀嚼”过的，都不是原生态的知识了。如果你想对这项知识有深入了解，必须自己从头开始，一点一点搭建属于自己的知识库。那样，知识才属于你的。下面是我对redis认知的介绍。</span></p>
+<p><span><span style="color: #00ffff;"><strong><span style="font-size: 18pt;"><span style="color: #258fb8;">redis 介绍</span><br></span></strong></span></span></p>
+<hr>
+<p>　　<span style="color: #000000;">Redis是一个开源的使用ANSI C语言编写、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。从2010年3月15日起，Redis的开发工作由VMware主持。</span></p>
+<p><span style="color: #000000;">　　定义：redis是一个key-value存储系统。和Memcached类似，<strong>Redis不仅仅支持简单的k/v类型的数据，同时还提供list(链表)、set(集合)、zset(sorted set --有序集合)和hash（哈希类型）等存储方式。</strong>它支持存储的value类型相对更多。这些数据类型都 支持push/pop、add/remove及取交集并集和差集及更丰富的操作，而且这些操作都是原子性的。在此基础上，redis支持各种不同方式的排序。与memcached一样，为了保证效率，数据都是缓存在内存中。区别的是redis会周期性的把更新的数据写入磁盘或者把修改操作写入追加的记录文 件，并且在此基础上实现了master-slave(主从)同步。（来自百度百科）</span></p>
+<p><span style="color: #000000;">　　在此我就不多介绍两者的区别了，后面的文章我会补上。现在很多大型企业项目也都应用redis做缓存处理，如新浪微博、Github、StackOverflow&nbsp;等。Redis的官网为<a href="http://redis.io/" target="_blank"><span style="color: #000000;">http://redis.io/</span></a>。</span></p>
+<p><span style="color: #000000;">　　redis的操作命令很多很多，我就不一一介绍了，提供个学习网站<a href="http://www.redis.cn/documentation.html" target="_blank"><span style="color: #000000;">http://www.redis.cn/documentation.html</span></a>，有兴趣的朋友可以看看。</span> </p>
+<p><span><span style="color: #00ffff;"><strong><span style="font-size: 18pt;"><span style="color: #258fb8;">安装 redis 服务器端和客户端</span><br></span></strong></span></span></p>
+<hr>
+<p><span style="color: #000000;">　　先下载并安装redis。通过<a href="https://github.com/mythz/redis-windows"><span style="color: #000000;">https://github.com/mythz/redis-windows</span></a>这里可以直接下载，然后解压，再解压得到以下截图文件：</span></p>
+<p><span style="color: #000000;"><img style="display: block; margin-left: auto; margin-right: auto;" src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/311425410283862.jpg" alt=""></span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><strong><span style="color: #000000;">1.1 简单介绍下里面部分文件：</span></strong></p>
+<div><span style="color: #000000;"><strong><strong><strong><strong>　　redis-server.exe</strong>：</strong></strong></strong>服务程序</span></div>
+<div><span style="color: #000000;"><strong><strong><strong>　　redis-check-dump.exe</strong>：</strong></strong>本地数据库检查</span></div>
+<div><span style="color: #000000;"><strong><strong>　　redis-check-aof.exe</strong>：</strong>更新日志检查</span></div>
+<div><span style="color: #000000;"><strong>　　redis-benchmark.exe</strong>：性能测试，用以模拟同时由N个客户端发送M个 SETs/GETs 查询 (类似于 Apache 的ab 工具).</span></div>
+<div><span style="color: #000000;"><strong>　　redis-cli.exe：</strong> 服务端开启后，我们的客户端就可以输入各种命令测试了 </span></div>
+<p><strong><span style="color: #000000;">1.2 开启redis服务器和客户端</span></strong></p>
+<p><span style="color: #000000;">　　1.2.1 先打开cmd命令，选择到redis-server.exe的目录，运行&nbsp;redis-server.exe redis.conf（这样就开启了redis服务端，如下图：），红色区域的Accepted 127.0.0.1:11796表示有客户端连接到该redis服务器上。<img style="display: block; margin-left: auto; margin-right: auto;" src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/301654089502095.jpg" alt=""></span></p>
+<p><span style="color: #000000;">　　1.2.2 重新打开一个cmd窗口，使用cd命令切换到指定目录，运行&nbsp;redis-cli.exe -h 127.0.0.1 -p 6379，其中 127.0.0.1是本地ip，6379是redis服务端的默认端口。并且我还做个测试数据，看下图红色下划线的city。（这样就开启了客户端）</span></p>
+<p><span style="color: #000000;"><img style="display: block; margin-left: auto; margin-right: auto;" src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/301654594194644.jpg" alt="">　　到这里redis的客户端和服务器端基本算是完成了。可以通过客户端测试一下各种命令了^_^。当然，我们不能仅仅满足于此，我们的目标是实现在.NET4.5 中完成对redis的操作。接下来我将阐述一下redis在.NET中的使用。里面有好几个地方需要注意哦，相信使用.NET4.0 和 .NET4.5的同仁们都有遇到的问题。详情见下篇博文。</span></p>
+<p><strong><span style="color: #000000;">1.3 安装windows redis服务</span></strong></p>
+<p><span style="color: #000000;">　　上面是通过cmd命令去安装redis服务器，其实可以直接下载一个安装软件redis-2.4.6-setup-64-bit.exe （我是64位操作系统）即可，版本很多，按自己需要下载。按照步骤安装下去就好了。很简单。下图是是安装好的windows redis服务。开启即可。^_^</span></p>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/301809194505512.jpg" alt=""></p>
+<p><span style="color: #00ffff;"><strong><span style="font-size: 18pt;"><span style="color: #258fb8;"><span style="color: #00ffff;"><strong><span style="font-size: 18pt;"><span style="color: #258fb8;">redis 安装</span></span></strong></span>总结<br></span></span></strong></span></p>
+<hr>
+<p>&nbsp;　　<span style="color: #000000;">redis的安装就这么点内容，需要注意的是，在使用时候redis服务端必须一直运行着（所以就做成windows服务最好了，哈哈）。对于熟悉cmd命令的很简单，不会的，百度下也很简单。redis开发的前期算是准备好了，下一篇是关于.NET4.5使用redis，并且有一些需要注意的地方。到时候慢慢说来。</span></p>
+<p><span style="color: #000000;">　　redis的核心很深奥，我还有许多东西需要去研究。希望大神们能不吝赐教。同时也希望和我一样，在研究路上的同仁，有<strong><span style="color: #ff0000;">好的见解</span></strong>或是<strong><span style="color: #ff0000;">资料</span></strong>能跟小弟分享下，大家一起探讨学习下。我的QQ联系方式：<strong>296319075&nbsp; </strong>随时联系，备注注明园友就好。大家秉承共同探讨、共同进步！如有转载，请注明出处，谢谢！^_^<strong><br></strong></span></p>
+<p><span style="color: #000000;">　　还有，如果大家不想下载redis的安装包，可以说下，我会把自己用的放到网盘中或者通过QQ等其他方式发给需要的你。网盘地址：<a title="redis安装包" href="http://pan.baidu.com/s/1pJkckEB" target="_blank">http://pan.baidu.com/s/1pJkckEB</a></span></p>
+<p><span style="text-decoration: underline;"><span style="color: #ff0000; text-decoration: underline;"><strong><a title="C#中使用Redis学习二 .NET4.5中使用redis hash操作" href="http://www.cnblogs.com/mzws/p/redis2.html" target="_blank"><span style="color: #ff0000; text-decoration: underline;">&nbsp;下一篇&gt;&gt;</span></a></strong></span></span></p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/mzws/category/637863.html">C# Redis 学习系列</a></div>
+<div id="EntryTag">标签: <a href="http://www.cnblogs.com/mzws/tag/windows%E4%B8%8B%E5%AE%89%E8%A3%85redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%92%8C%E5%AE%A2%E6%88%B7%E7%AB%AF/">windows下安装redis服务端和客户端</a></div>
+<div id="blog_post_info"><div id="green_channel">
+绿色通道：
+<a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(4193718,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+<a id="green_channel_follow" onclick="c_follow();" href="javascript:void(0);">关注我</a>
+<a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a><a id="green_channel_contact" href="http://msg.cnblogs.com/send/%E5%BC%A0%E6%96%87%E4%B9%A6" target="_blank">与我联系</a>
+<a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/icon_weibo_24.png" alt=""></a>
+</div>
+<div id="author_profile">
+<div id="author_profile_info" class="author_profile_info">
+<a href="http://home.cnblogs.com/u/mzws/" target="_blank"><img src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/20130522092354.png" class="author_avatar" alt=""></a>
+<div id="author_profile_detail" class="author_profile_info">
+<a href="http://home.cnblogs.com/u/mzws/">张文书</a><br>
+<a href="http://home.cnblogs.com/u/mzws/followees">关注 - 4</a><br>
+<a href="http://home.cnblogs.com/u/mzws/followers">粉丝 - 30</a>
+</div>
+</div>
+<div class="clear"></div>
+<div id="author_profile_honor"></div>
+<div id="author_profile_follow">
+    <a href="javascript:void(0);" onclick="c_follow();return false;">+加关注</a>
+</div>
+</div>
+<div id="div_digg">										
+    <div class="diggit" onclick="votePost(4193718,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">2</span>
+    </div>
+	<div class="buryit" onclick="votePost(4193718,&#39;Bury&#39;)"> 
+		<span class="burynum" id="bury_count">0</span>
+	</div>
+	<div class="clear"></div>	
+	<div class="diggword" id="digg_tips">
+    (请您对文章做出评价)
+    </div>	
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/mzws/p/LazyLoadImg.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/mzws/p/LazyLoadImg.html" title="发布于2014-12-31 14:07">jQuery 插件开发——LazyLoadImg（预加载和延迟加载图片)</a><br><a href="http://www.cnblogs.com/mzws/p/redis-2.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/mzws/p/redis-2.html" title="发布于2015-01-07 09:40">C#中使用Redis学习二 在.NET4.5中使用redis hash操作</a><br></div>
+</div>
+
+
+		</div>
+		<div class="itemdesc">
+			发表于 <span id="post-date">2015-01-02 11:26</span> <a href="http://www.cnblogs.com/mzws/">张文书</a> 阅读(<span id="post_view_count">972</span>) 评论(<span id="post_comment_count">9</span>)  <a href="http://i.cnblogs.com/EditPosts.aspx?postid=4193718" rel="nofollow">编辑</a> <a href="http://www.cnblogs.com/mzws/p/redis1.html?#" onclick="AddToWz(4193718);return false;">收藏</a>
+		</div>
+	</div>
+	<div class="seperator">&nbsp;</div>
+	<script type="text/javascript">var allowComments=true,isLogined=true,cb_blogId=152094,cb_entryId=4193718,cb_blogApp=currentBlogApp,cb_blogUserGuid='c7686520-8caf-e111-aa3f-842b2b196315',cb_entryCreatedDate='2015/1/2 11:26:00';loadViewCount(cb_entryId);</script>
+	
+</div><a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"></div>
+<div class="post">
+<a name="评论"></a>
+<div class="moreinfo">
+	<div class="moreinfotitle">
+		评论
+	</div>
+	
+	
+			<div class="comments">
+		
+			<div class="comment">
+				<div class="comment_title">
+					<a href="http://www.cnblogs.com/mzws/p/redis1.html?#3098441" class="layer">#1楼</a><a name="3098441" id="comment_anchor_3098441"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment_actions"><a href="javascript:void(0);" onclick="return ReplyComment(3098441,&#39;GVgRNaushx+vIlOOQHTdeX1Vr/g5G/xMDmRJKBBXCHAvxpbqUfKsxQ==&#39;)">回复</a><a href="javascript:void(0);" onclick="return QuoteComment(3098441,&#39;GVgRNaushx+vIlOOQHTdeX1Vr/g5G/xMDmRJKBBXCHAvxpbqUfKsxQ==&#39;)">引用</a></span>
+				</div>
+				<div class="comment_content"><div id="comment_body_3098441" class="blog_comment_body">有C#的驱动代码吗？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3098441,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3098441,&#39;Bury&#39;,this)">反对(0)</a></div></div>
+				<div class="comment_footer"><a id="a_comment_author_3098441" href="http://www.cnblogs.com/autumn/" target="_blank">寒枫</a> <a href="http://msg.cnblogs.com/send/%E5%AF%92%E6%9E%AB" title="发送站内短消息" class="sendMsg2This">&nbsp;</a> 评论于  <span class="comment_date">2015-01-02 13:28</span></div>
+			</div>
+		
+			<div class="comment">
+				<div class="comment_title">
+					<a href="http://www.cnblogs.com/mzws/p/redis1.html?#3098863" class="layer">#2楼</a><a name="3098863" id="comment_anchor_3098863"></a>[<span class="louzhu">楼主</span>]&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment_actions"><a href="javascript:void(0);" onclick="return ReplyComment(3098863,&#39;MLXEE1ja1d2Yr/JJpP7wnWh1ZHohJt8Jg3LrzDhildQMMluxP+rZhw==&#39;)">回复</a><a href="javascript:void(0);" onclick="return QuoteComment(3098863,&#39;MLXEE1ja1d2Yr/JJpP7wnWh1ZHohJt8Jg3LrzDhildQMMluxP+rZhw==&#39;)">引用</a></span>
+				</div>
+				<div class="comment_content"><div id="comment_body_3098863" class="blog_comment_body"><a href="http://www.cnblogs.com/mzws/p/redis1.html?#3098441" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3098441);">@</a>寒枫<br>不好意思，暂时只有我自己写的一个测试小例子，很多东西还有带我一点一点去完善。大哥有何好的资料可以分享一下，感激不尽。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3098863,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3098863,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3098863_avatar" style="display:none;">http://pic.cnblogs.com/face/416274/20130522092354.png</span></div>
+				<div class="comment_footer"><a id="a_comment_author_3098863" href="http://www.cnblogs.com/mzws/" target="_blank">张文书</a> <a href="http://msg.cnblogs.com/send/%E5%BC%A0%E6%96%87%E4%B9%A6" title="发送站内短消息" class="sendMsg2This">&nbsp;</a> 评论于  <span class="comment_date">2015-01-03 19:55</span></div>
+			</div>
+		
+			<div class="comment">
+				<div class="comment_title">
+					<a href="http://www.cnblogs.com/mzws/p/redis1.html?#3136584" class="layer">#3楼</a><a name="3136584" id="comment_anchor_3136584"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment_actions"><a href="javascript:void(0);" onclick="return ReplyComment(3136584,&#39;KRl4tEbI08HCBar65wvYUvTBliAHC4PVSKKcttSvnPIOJMJBQbWyNA==&#39;)">回复</a><a href="javascript:void(0);" onclick="return QuoteComment(3136584,&#39;KRl4tEbI08HCBar65wvYUvTBliAHC4PVSKKcttSvnPIOJMJBQbWyNA==&#39;)">引用</a></span>
+				</div>
+				<div class="comment_content"><div id="comment_body_3136584" class="blog_comment_body">redis-2.4.6-setup-64-bit.exe 下载地址能分享下吗？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3136584,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3136584,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3136584_avatar" style="display:none;">http://pic.cnblogs.com/face/319291/20150109120045.png</span></div>
+				<div class="comment_footer"><a id="a_comment_author_3136584" href="http://www.cnblogs.com/kangyangyang/" target="_blank">kangyangyang</a> <a href="http://msg.cnblogs.com/send/kangyangyang" title="发送站内短消息" class="sendMsg2This">&nbsp;</a> 评论于  <span class="comment_date">2015-03-06 17:07</span></div>
+			</div>
+		
+			<div class="comment">
+				<div class="comment_title">
+					<a href="http://www.cnblogs.com/mzws/p/redis1.html?#3136587" class="layer">#4楼</a><a name="3136587" id="comment_anchor_3136587"></a>[<span class="louzhu">楼主</span>]&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment_actions"><a href="javascript:void(0);" onclick="return ReplyComment(3136587,&#39;MLXEE1ja1d2Yr/JJpP7wnWh1ZHohJt8Jg3LrzDhildQMMluxP+rZhw==&#39;)">回复</a><a href="javascript:void(0);" onclick="return QuoteComment(3136587,&#39;MLXEE1ja1d2Yr/JJpP7wnWh1ZHohJt8Jg3LrzDhildQMMluxP+rZhw==&#39;)">引用</a></span>
+				</div>
+				<div class="comment_content"><div id="comment_body_3136587" class="blog_comment_body"><a href="http://www.cnblogs.com/mzws/p/redis1.html?#3136584" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3136584);">@</a>kangyangyang<br>嗯，网盘地址：<a href="http://pan.baidu.com/s/1i3w1sAL" target="_blank">http://pan.baidu.com/s/1i3w1sAL</a></div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3136587,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3136587,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3136587_avatar" style="display:none;">http://pic.cnblogs.com/face/416274/20130522092354.png</span></div>
+				<div class="comment_footer"><a id="a_comment_author_3136587" href="http://www.cnblogs.com/mzws/" target="_blank">张文书</a> <a href="http://msg.cnblogs.com/send/%E5%BC%A0%E6%96%87%E4%B9%A6" title="发送站内短消息" class="sendMsg2This">&nbsp;</a> 评论于  <span class="comment_date">2015-03-06 17:14</span></div>
+			</div>
+		
+			<div class="comment">
+				<div class="comment_title">
+					<a href="http://www.cnblogs.com/mzws/p/redis1.html?#3136588" class="layer">#5楼</a><a name="3136588" id="comment_anchor_3136588"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment_actions"><a href="javascript:void(0);" onclick="return ReplyComment(3136588,&#39;KRl4tEbI08HCBar65wvYUvTBliAHC4PVSKKcttSvnPIOJMJBQbWyNA==&#39;)">回复</a><a href="javascript:void(0);" onclick="return QuoteComment(3136588,&#39;KRl4tEbI08HCBar65wvYUvTBliAHC4PVSKKcttSvnPIOJMJBQbWyNA==&#39;)">引用</a></span>
+				</div>
+				<div class="comment_content"><div id="comment_body_3136588" class="blog_comment_body">谢谢。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3136588,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3136588,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3136588_avatar" style="display:none;">http://pic.cnblogs.com/face/319291/20150109120045.png</span></div>
+				<div class="comment_footer"><a id="a_comment_author_3136588" href="http://www.cnblogs.com/kangyangyang/" target="_blank">kangyangyang</a> <a href="http://msg.cnblogs.com/send/kangyangyang" title="发送站内短消息" class="sendMsg2This">&nbsp;</a> 评论于  <span class="comment_date">2015-03-06 17:15</span></div>
+			</div>
+		
+			<div class="comment">
+				<div class="comment_title">
+					<a href="http://www.cnblogs.com/mzws/p/redis1.html?#3136589" class="layer">#6楼</a><a name="3136589" id="comment_anchor_3136589"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment_actions"><a href="javascript:void(0);" onclick="return ReplyComment(3136589,&#39;KRl4tEbI08HCBar65wvYUvTBliAHC4PVSKKcttSvnPIOJMJBQbWyNA==&#39;)">回复</a><a href="javascript:void(0);" onclick="return QuoteComment(3136589,&#39;KRl4tEbI08HCBar65wvYUvTBliAHC4PVSKKcttSvnPIOJMJBQbWyNA==&#39;)">引用</a></span>
+				</div>
+				<div class="comment_content"><div id="comment_body_3136589" class="blog_comment_body">这是官方的吗？网上找了半天都没找到，呵呵，谢谢了。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3136589,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3136589,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3136589_avatar" style="display:none;">http://pic.cnblogs.com/face/319291/20150109120045.png</span></div>
+				<div class="comment_footer"><a id="a_comment_author_3136589" href="http://www.cnblogs.com/kangyangyang/" target="_blank">kangyangyang</a> <a href="http://msg.cnblogs.com/send/kangyangyang" title="发送站内短消息" class="sendMsg2This">&nbsp;</a> 评论于  <span class="comment_date">2015-03-06 17:15</span></div>
+			</div>
+		
+			<div class="comment">
+				<div class="comment_title">
+					<a href="http://www.cnblogs.com/mzws/p/redis1.html?#3136593" class="layer">#7楼</a><a name="3136593" id="comment_anchor_3136593"></a>[<span class="louzhu">楼主</span>]&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment_actions"><a href="javascript:void(0);" onclick="return ReplyComment(3136593,&#39;MLXEE1ja1d2Yr/JJpP7wnWh1ZHohJt8Jg3LrzDhildQMMluxP+rZhw==&#39;)">回复</a><a href="javascript:void(0);" onclick="return QuoteComment(3136593,&#39;MLXEE1ja1d2Yr/JJpP7wnWh1ZHohJt8Jg3LrzDhildQMMluxP+rZhw==&#39;)">引用</a></span>
+				</div>
+				<div class="comment_content"><div id="comment_body_3136593" class="blog_comment_body"><a href="http://www.cnblogs.com/mzws/p/redis1.html?#3136589" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3136589);">@</a>kangyangyang<br>嗯，是的，github中也有很多人上传，你也可以去看看。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3136593,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3136593,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3136593_avatar" style="display:none;">http://pic.cnblogs.com/face/416274/20130522092354.png</span></div>
+				<div class="comment_footer"><a id="a_comment_author_3136593" href="http://www.cnblogs.com/mzws/" target="_blank">张文书</a> <a href="http://msg.cnblogs.com/send/%E5%BC%A0%E6%96%87%E4%B9%A6" title="发送站内短消息" class="sendMsg2This">&nbsp;</a> 评论于  <span class="comment_date">2015-03-06 17:17</span></div>
+			</div>
+		
+			<div class="comment">
+				<div class="comment_title">
+					<a href="http://www.cnblogs.com/mzws/p/redis1.html?#3136595" class="layer">#8楼</a><a name="3136595" id="comment_anchor_3136595"></a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment_actions"><a href="javascript:void(0);" onclick="return ReplyComment(3136595,&#39;KRl4tEbI08HCBar65wvYUvTBliAHC4PVSKKcttSvnPIOJMJBQbWyNA==&#39;)">回复</a><a href="javascript:void(0);" onclick="return QuoteComment(3136595,&#39;KRl4tEbI08HCBar65wvYUvTBliAHC4PVSKKcttSvnPIOJMJBQbWyNA==&#39;)">引用</a></span>
+				</div>
+				<div class="comment_content"><div id="comment_body_3136595" class="blog_comment_body">以后可以多多交流，还望不吝赐教！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3136595,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3136595,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3136595_avatar" style="display:none;">http://pic.cnblogs.com/face/319291/20150109120045.png</span></div>
+				<div class="comment_footer"><a id="a_comment_author_3136595" href="http://www.cnblogs.com/kangyangyang/" target="_blank">kangyangyang</a> <a href="http://msg.cnblogs.com/send/kangyangyang" title="发送站内短消息" class="sendMsg2This">&nbsp;</a> 评论于  <span class="comment_date">2015-03-06 17:19</span></div>
+			</div>
+		
+			<div class="comment">
+				<div class="comment_title">
+					<a href="http://www.cnblogs.com/mzws/p/redis1.html?#3136599" class="layer">#9楼</a><a name="3136599" id="comment_anchor_3136599"></a>[<span class="louzhu">楼主</span>]<span id="comment-maxId" style="display:none;">3136599</span><span id="comment-maxDate" style="display:none;">2015/3/6 17:20:35</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment_actions"><a href="javascript:void(0);" onclick="return ReplyComment(3136599,&#39;MLXEE1ja1d2Yr/JJpP7wnWh1ZHohJt8Jg3LrzDhildQMMluxP+rZhw==&#39;)">回复</a><a href="javascript:void(0);" onclick="return QuoteComment(3136599,&#39;MLXEE1ja1d2Yr/JJpP7wnWh1ZHohJt8Jg3LrzDhildQMMluxP+rZhw==&#39;)">引用</a></span>
+				</div>
+				<div class="comment_content"><div id="comment_body_3136599" class="blog_comment_body"><a href="http://www.cnblogs.com/mzws/p/redis1.html?#3136595" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3136595);">@</a>kangyangyang<br>嗯，呵呵，相互学习吧。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3136599,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3136599,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3136599_avatar" style="display:none;">http://pic.cnblogs.com/face/416274/20130522092354.png</span></div>
+				<div class="comment_footer"><a id="a_comment_author_3136599" href="http://www.cnblogs.com/mzws/" target="_blank">张文书</a> <a href="http://msg.cnblogs.com/send/%E5%BC%A0%E6%96%87%E4%B9%A6" title="发送站内短消息" class="sendMsg2This">&nbsp;</a> 评论于  <span class="comment_date">2015-03-06 17:20</span></div>
+			</div>
+		
+			</div>
+		
+</div>
+</div>
+<div class="seperator">&nbsp;</div>
+<div id="comments_pager_bottom"></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" id="lnk_RefreshComments" onclick="return RefreshCommentList();">刷新评论</a><a href="http://www.cnblogs.com/mzws/p/redis1.html?#" onclick="return RefreshPage();">刷新页面</a><a href="http://www.cnblogs.com/mzws/p/redis1.html?#top">返回顶部</a></div>
+<div id="comment_form_container"><div id="commentform_title">发表评论</div>
+<span id="tip_comment" style="color:Red"></span>
+<p>
+昵称：<input type="text" id="tbCommentAuthor" class="author" disabled="disabled" size="50" value="新建文本文档.txt">
+</p>
+<div class="commentbox_main">
+<div class="commentbox_title">
+<div class="commentbox_title_left">评论内容：</div>
+<div class="commentbox_title_right">
+<img id="ubb_quote" class="comment_icon" src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/quote.gif" alt="引用" title="添加引用" onclick="insertUBB(&#39;tbCommentBody&#39;,&#39;quote&#39;)">
+<img id="ubb_bold" class="comment_icon" src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/b.png" alt="粗体" title="添加粗体" onclick="insertUBB(&#39;tbCommentBody&#39;,&#39;b&#39;)">
+<img id="ubb_url" class="comment_icon" src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/lk.png" alt="链接" title="添加链接" onclick="insertUbbUrl(&#39;tbCommentBody&#39;)">
+<img id="ubb_indent" class="comment_icon" src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/indent.png" alt="缩进" title="添加首行缩进" onclick="insertIndent(&#39;tbCommentBody&#39;)">
+<img id="ubb_code" class="comment_icon" src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/InsertCode.gif" alt="代码" title="添加代码" onclick="insertUbbCode()">
+<img id="ubb_img" class="comment_icon" src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/img.gif" alt="图片" title="上传图片" onclick="OpenImageUploadWindow();">
+</div>
+</div>
+<div class="clear"></div>
+<textarea id="tbCommentBody" class="comment_textarea" rows="20" cols="50"></textarea>
+</div>
+<p id="commentbox_opt">
+<input id="btn_comment_submit" type="button" class="comment_btn" value="提交评论">
+<span id="span_comment_canceledit" style="display:none"><a href="javascript:void(0);" onclick="return CancelCommentEdit()">不改了</a></span>
+<a href="javascript:void(0);" onclick="return logout();">注销</a>
+        <a id="commentbox_opt_sub" href="javascript:void(0);" title="订阅后有新评论时会邮件通知您" onclick="commentManager.Subscribe()">订阅评论</a>
+</p>
+<div id="tip_comment2" style="color:Red"></div>
+<p>
+[Ctrl+Enter快捷键提交]
+</p>
+<div style="display:none">
+<span id="comment_edit_id"></span><span id="span_parentcomment_id"></span>
+<span id="span_parent_id"></span>
+<span id="span_comment_replyto"></span>
+<span id="span_comment_posted"></span>
+</div>
+</div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="site_nav_under"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br><a href="http://www.rongcloud.cn/" target="_blank">【推荐】融云即时通讯云－专注为 App 开发者提供IM云服务</a><br><a href="https://www.jpush.cn/" target="_blank">【推荐】免费集成极光推送SDK，让APP实现高安全、高并发的推送功能</a><br><a href="http://click.aliyun.com/m/1328/" target="_blank">【专享】阿里云9折优惠码：bky901</a><br></div>
+<div id="opt_under_post"></div>
+<script type="text/javascript">
+    var enableGoogleAd = canShowAdsense(); 
+    fixPostBodyFormat();
+</script>
+<div id="google_ad_c1" class="c_ad_block"><object width="300" height="250" data="http://img.cnblogs.com/ad/IBM_Bluemix_C1.swf" type="application/x-shockwave-flash"><param name="src" value="http://img.cnblogs.com/ad/IBM_Bluemix_C1.swf"></object></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="http://news.cnblogs.com/n/529469/" target="_blank">300多热门App感染恶意程序 病毒制造者身份锁定</a><br> ·  <a href="http://news.cnblogs.com/n/529468/" target="_blank">微软向Ahmed送去了Surface Pro 3等高科技产品大礼包</a><br> ·  <a href="http://news.cnblogs.com/n/529467/" target="_blank">微软二代Band手环提前泄密：外观/性能升级</a><br> ·  <a href="http://news.cnblogs.com/n/529466/" target="_blank">张瑞敏：过去十年，海尔在商业模式创新上做了哪些探索？</a><br> ·  <a href="http://news.cnblogs.com/n/529465/" target="_blank">XcodeGhost漏洞事件 会引发苹果信任危机吗？</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="google_ad_c2" class="c_ad_block"><a href="http://e.jikexueyuan.com/python.html?hmsr=cnb_banner_python_09.14" target="_blank"><img width="468" height="60" src="./C#中使用Redis学习一 windows安装redis服务器端和客户端 - 张文书 - 博客园_files/24442-20150914101340023-1721833902.jpg" alt=""></a></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/529285/" target="_blank">下一代云计算模式：Docker正掀起个性化商业革命</a><br> ·  <a href="http://kb.cnblogs.com/page/528495/" target="_blank">野生程序员的故事</a><br> ·  <a href="http://kb.cnblogs.com/page/528972/" target="_blank">状态机的两种写法</a><br> ·  <a href="http://kb.cnblogs.com/page/528971/" target="_blank">状态机思路在程序设计中的应用</a><br> ·  <a href="http://kb.cnblogs.com/page/528966/" target="_blank">技术系列之“状态机”</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+$(function () {
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 200);
+});
+</script>
+</div>
+
+                    </div></td>
+                </tr>
+            </tbody></table>
+        </td>
+    </tr>
+</tbody></table>
+
+
+
+</body></html>
